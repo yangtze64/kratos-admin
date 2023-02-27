@@ -3,14 +3,15 @@ package biz
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	"kratos-admin/app/usercenter/internal/model/entity"
 )
 
 type User struct {
 	Uid      string
 	Username string
 	Realname string
-	mobile   string
-	AreaCode string
+	Mobile   string
+	AreaCode int32
 	Email    string
 	Weixin   string
 	Unionid  string
@@ -21,7 +22,7 @@ type UserRepo interface {
 	Update(ctx context.Context, uid string) (bool, error)
 	Delete(ctx context.Context, uid string) (bool, error)
 	List(ctx context.Context) ([]*User, error)
-	FindByUid(ctx context.Context, uid string) (*User, error)
+	FindByUid(ctx context.Context, uid string) (user *entity.SysUser, err error)
 }
 
 type UserUseCase struct {
