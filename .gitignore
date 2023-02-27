@@ -1,0 +1,8 @@
+.idea/
+.git/
+.vscode/
+.DS_Store
+go.sum
+openapi.yaml
+*.pb.go
+*.pb.validate.go

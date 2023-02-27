@@ -1,0 +1,252 @@
+syntax = "proto3";
+
+package usercenter.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "validate/validate.proto";
+
+option go_package = "api/usercenter/service/v1;v1";
+
+
+service UserCenter {
+    // 注册
+    rpc Register (Register.req) returns (Register.resp) {
+        option (google.api.http) = {
+            post: "/passport/v1/register"
+            body: "*"
+        };
+    }
+    // 密码登陆
+    rpc PasswdLogin (PasswdLogin.req) returns (PasswdLogin.resp) {
+        option (google.api.http) = {
+            post: "/passport/v1/login"
+            body: "*"
+        };
+    }
+    // 模拟登陆
+    rpc SimulationLogin (SimulationLogin.req) returns (SimulationLogin.resp) {
+        option (google.api.http) = {
+            post: "/passport/v1/simulation/login"
+            body: "*"
+        };
+    }
+    // 登出
+    rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            get: "/passport/v1/logout"
+            additional_bindings {
+                post: "/passport/v1/logout",
+                body: "*",
+            }
+        };
+    }
+    // 创建用户
+    rpc CreateUser (CreateUser.req) returns (CreateUser.resp) {
+        option (google.api.http) = {
+            post: "/usercenter/v1/users"
+            body: "*"
+        };
+    }
+    // 更新用户
+    rpc UpdateUser (UpdateUser.req) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            put: "/usercenter/v1/users/{uid}"
+            body: "*"
+        };
+    }
+    // 删除用户
+    rpc DeleteUser (DeleteUser.req) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/usercenter/v1/users/{uid}"
+        };
+    }
+    // 用户列表
+    rpc ListUser (UserFilter) returns (ListUser.resp) {
+        option (google.api.http) = {
+            get: "/usercenter/v1/users"
+        };
+    }
+    // UID获取用户信息
+    rpc FindUserByUid (FindUserByUid.req) returns (User) {
+        option (google.api.http) = {
+            get: "/usercenter/v1/users/{uid}"
+        };
+    }
+    // UID判断用户是否存在
+    rpc ExistUserByUid (ExistUserByUid.req) returns (ExistUserByUid.resp) {
+        option (google.api.http) = {
+            get: "/usercenter/v1/users/exist/{uid}"
+        };
+    }
+    // 获取用户UID
+    rpc FindUserIds (UserFilter) returns (FindUserIds.resp) {
+        option (google.api.http) = {
+            get: "/usercenter/v1/users/uids"
+        };
+    }
+    // 批处理用户
+    rpc BatchUser (BatchUser.req) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/usercenter/v1/users/batch"
+            body: "*"
+        };
+    }
+}
+
+message Register {
+    message req {
+        string username = 1 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*-]{6,20}$"}];
+        string mobile = 2 [(validate.rules).string = {pattern:"^[0-9]{6,20}$"}];
+        int32 area_code = 3 [(validate.rules).int32 = {gte: 1,  lte: 9999}];
+        string password = 4 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*-]{6,20}$"}];
+        string password_review = 5 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*-]{6,20}$"}];
+        string email = 6 [(validate.rules).string.email = true];
+        string weixin = 7 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
+    }
+    message resp {
+        string username = 1;
+        string mobile = 2;
+        int32 area_code = 3;
+        string email = 4;
+    }
+}
+
+message PasswdLogin {
+    message req {
+        string username = 1;// 包含 username、mobile、email
+        int32 area_code = 2; // username 是 mobile时可用
+        string password = 3;
+    }
+    message resp {
+        string uid = 1;
+        string username = 2;
+        string realname = 3;
+        string AccessToken = 4;
+        int64 AccessExpire = 5;
+        int64 RefreshAfter = 6;
+    }
+}
+
+message SimulationLogin {
+    message req {
+        string mobile = 1;
+        int32 area_code = 2;
+    }
+    message resp {
+        string uid = 1;
+        string username = 2;
+        string realname = 3;
+        string AccessToken = 4;
+        int64 AccessExpire = 5;
+        int64 RefreshAfter = 6;
+    }
+}
+
+message CreateUser {
+    message req {
+        string username = 1 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*-]{6,20}$"}];
+        string mobile = 2 [(validate.rules).string = {pattern:"^[0-9]{6,20}$"}];
+        int32 area_code = 3 [(validate.rules).int32 = {gte: 1,  lte: 9999}];
+        string password = 4 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*-]{6,20}$"}];
+        string email = 5 [(validate.rules).string.email = true];
+        string weixin = 6 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
+        string unionid = 7 [(validate.rules).string.max_len = 64];
+        string operator = 8 [(validate.rules).string.max_len = 36];
+    }
+    message resp {
+        string id = 1;
+        string uid = 2;
+    }
+}
+message UpdateUser {
+    message req {
+        string uid = 1 [(validate.rules).string.uuid = true];
+        string username = 2 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*-]{6,20}$"}];
+        string mobile = 3 [(validate.rules).string = {pattern:"^[0-9]{6,20}$"}];
+        int32 area_code = 4 [(validate.rules).int32 = {gte: 1,  lte: 9999}];
+        string email = 5 [(validate.rules).string.email = true];
+        string weixin = 6 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
+        string unionid = 7 [(validate.rules).string.max_len = 64];
+        string operator = 8 [(validate.rules).string.max_len = 36];
+    }
+}
+message DeleteUser {
+    message req {
+        string uid = 1 [(validate.rules).string.uuid = true];
+    }
+}
+
+message User {
+    string uid = 1;
+    string username = 2;
+    string realname = 3;
+    string mobile = 4;
+    string area_code = 5;
+    string password = 6;
+    string email = 7;
+    string weixin = 8;
+    string unionid = 9;
+    string created_at = 10;
+    string updated_at = 11;
+    string operator = 12;
+}
+message UserFilter {
+    repeated string uid = 1;
+    repeated string mobile = 2;
+    string area_code = 3;
+    string username = 4;
+    string username_pre= 5;
+    string realname = 6;
+    string realname_pre = 7;
+    string email = 8;
+    string email_pre = 9;
+    string weixin = 10;
+    string unionid = 11;
+    string created_at = 12;
+    string created_at_start = 13;
+    string created_at_end = 14;
+    string updated_at = 15;
+    string updated_at_start = 16;
+    string updated_at_end = 17;
+    repeated string operator = 18;
+    int64 page = 19;
+    int64 limit = 20;
+}
+message ListUser {
+    message resp {
+        int64 total = 1;
+        repeated User list = 2;
+    }
+}
+message FindUserByUid {
+    message req {
+        string uid = 1 [(validate.rules).string.uuid = true];
+    }
+}
+message ExistUserByUid {
+    message req {
+        string uid = 1 [(validate.rules).string.uuid = true];
+    }
+    message resp {
+        bool is_exist = 1;
+    }
+}
+message FindUserIds{
+    message resp {
+        repeated string uid = 1;
+    }
+}
+
+message BatchUser {
+    enum methodEnum{
+        SAVE = 0;
+        INSERT = 1;
+        UPDATE = 2;
+        DELETE = 3;
+    }
+    message req {
+        methodEnum method = 1;
+        repeated User data = 2;
+    }
+}

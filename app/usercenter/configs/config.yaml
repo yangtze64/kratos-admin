@@ -1,0 +1,24 @@
+server:
+  http:
+    addr: 0.0.0.0:8801
+    timeout: 1s
+  grpc:
+    addr: 0.0.0.0:9801
+    timeout: 1s
+data:
+  database:
+    default:
+      source: root:123456@tcp(127.0.0.1:3307)/admin?charset=utf8mb4&parseTime=True&loc=PRC
+      pool:
+        max_conn: 10
+        max_idle: 3
+    user:
+      source: root:123456@tcp(127.0.0.1:3307)/admin?charset=utf8mb4&parseTime=True&loc=PRC
+      pool:
+        max_conn: 10
+        max_idle: 3
+  redis:
+    default:
+      addr: 127.0.0.1:6379
+      read_timeout: 0.2s
+      write_timeout: 0.2s
