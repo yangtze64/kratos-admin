@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/conf"
 	"kratos-admin/app/usercenter/internal/service"
@@ -15,6 +16,7 @@ func NewGRPCServer(c *conf.Server, userCenterService *service.UserCenterService,
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+			validate.Validator(),
 		),
 	}
 	if c.Grpc.Network != "" {

@@ -27,7 +27,3 @@ func NewPassportUseCase(repo PassportRepo, logger log.Logger) *PassportUseCase {
 		log:  log.NewHelper(log.With(logger, "module", "usecase/passport")),
 	}
 }
-
-func (p *PassportUseCase) Register() {
-
-}
