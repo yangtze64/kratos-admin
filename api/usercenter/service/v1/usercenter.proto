@@ -175,7 +175,7 @@ message CreateUser {
         string operator = 11;
     }
     message resp {
-        string id = 1;
+        int64 id = 1;
         string uid = 2;
     }
 }
