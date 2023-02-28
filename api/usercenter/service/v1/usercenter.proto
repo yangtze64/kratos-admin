@@ -104,8 +104,8 @@ message User {
     string email = 6;
     string weixin = 7;
     string unionid = 8;
-    google.protobuf.Timestamp created_at = 9;
-    google.protobuf.Timestamp updated_at = 10;
+    google.protobuf.Timestamp create_at = 9;
+    google.protobuf.Timestamp update_at = 10;
     string operator = 11;
 }
 
@@ -170,8 +170,8 @@ message CreateUser {
         string email = 6 [(validate.rules).string = {ignore_empty:true, email:true}];
         string weixin = 7 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
         string unionid = 8;
-        google.protobuf.Timestamp created_at = 9;
-        google.protobuf.Timestamp updated_at = 10;
+        google.protobuf.Timestamp create_at = 9;
+        google.protobuf.Timestamp update_at = 10;
         string operator = 11;
     }
     message resp {
@@ -197,12 +197,12 @@ message UserFilter {
     string email_pre = 9;
     string weixin = 10;
     string unionid = 11;
-    string created_at = 12;
-    string created_at_start = 13;
-    string created_at_end = 14;
-    string updated_at = 15;
-    string updated_at_start = 16;
-    string updated_at_end = 17;
+    string create_at = 12;
+    string create_at_start = 13;
+    string create_at_end = 14;
+    string update_at = 15;
+    string update_at_start = 16;
+    string update_at_end = 17;
     repeated string operator = 18;
     int64 page = 19;
     int64 limit = 20;

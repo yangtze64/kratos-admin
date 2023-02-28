@@ -4,7 +4,7 @@ import (
 	"context"
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/biz"
-	"kratos-admin/pkg/errx"
+	"kratos-admin/utils/errx"
 )
 
 func (s *UserCenterService) Register(ctx context.Context, req *v1.RegisterReq) (resp *v1.RegisterResp, err error) {
