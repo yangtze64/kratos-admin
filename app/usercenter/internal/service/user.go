@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/biz"
 	"kratos-admin/utils/errx"
+	"time"
 )
 
 func (s *UserCenterService) CreateUser(ctx context.Context, req *v1.CreateUserReq) (resp *v1.CreateUserResp, err error) {
@@ -19,8 +19,8 @@ func (s *UserCenterService) CreateUser(ctx context.Context, req *v1.CreateUserRe
 		Email:    req.Email,
 		Weixin:   req.Weixin,
 		Operator: req.Operator,
-		CreateAt: req.CreateAt.AsTime(),
-		UpdateAt: req.UpdateAt.AsTime(),
+		CreateTime:  req.CreateTime,
+		UpdateTime:  req.UpdateTime,
 	}
 
 	user, err := s.uc.CreateUser(ctx, u)
@@ -51,8 +51,10 @@ func (s *UserCenterService) FindUserByUid(ctx context.Context, req *v1.FindUserB
 		Email:    u.Email,
 		Weixin:   u.Weixin,
 		Unionid:  u.Unionid,
-		CreateAt: timestamppb.New(u.CreateAt),
-		UpdateAt: timestamppb.New(u.UpdateAt),
+		CreateTime: u.CreateTime,
+		UpdateTime: u.UpdateTime,
+		CreateAt: time.Unix(u.CreateTime,0).Local().Format("2006-01-02 15:04:05"),
+		UpdateAt: time.Unix(u.UpdateTime,0).Local().Format("2006-01-02 15:04:05"),
 		Operator: u.Operator,
 	}, nil
 }

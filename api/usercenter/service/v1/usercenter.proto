@@ -4,7 +4,6 @@ package usercenter.service.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "api/usercenter/service/v1;v1";
@@ -104,9 +103,11 @@ message User {
     string email = 6;
     string weixin = 7;
     string unionid = 8;
-    google.protobuf.Timestamp create_at = 9;
-    google.protobuf.Timestamp update_at = 10;
-    string operator = 11;
+    string operator = 9;
+    string create_at = 10;
+    string update_at = 11;
+    int64 create_time = 12;
+    int64 update_time = 13;
 }
 
 message Register {
@@ -170,9 +171,9 @@ message CreateUser {
         string email = 6 [(validate.rules).string = {ignore_empty:true, email:true}];
         string weixin = 7 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
         string unionid = 8;
-        google.protobuf.Timestamp create_at = 9;
-        google.protobuf.Timestamp update_at = 10;
-        string operator = 11;
+        string operator = 9;
+        int64 create_time = 10;
+        int64 update_time = 11;
     }
     message resp {
         int64 id = 1;

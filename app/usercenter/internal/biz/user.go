@@ -18,9 +18,9 @@ type User struct {
 	Email    string
 	Weixin   string
 	Unionid  string
-	CreateAt time.Time
-	UpdateAt time.Time
 	Operator string
+	CreateTime int64
+	UpdateTime int64
 }
 
 type UserRepo interface {
@@ -66,12 +66,12 @@ func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error)
 	}
 	user.Uid = utils.NewUuid()
 	user.Password = utils.GenPasswd(user.Password)
-	nowTime := time.Now()
-	if user.CreateAt.IsZero() {
-		user.CreateAt = nowTime
+	nowTime := time.Now().Unix()
+	if user.CreateTime <= 0 {
+		user.CreateTime = nowTime
 	}
-	if user.UpdateAt.IsZero() {
-		user.CreateAt = nowTime
+	if user.UpdateTime <= 0 {
+		user.UpdateTime = nowTime
 	}
 	id, err := u.repo.Create(ctx, user)
 	if err != nil {

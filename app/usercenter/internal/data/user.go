@@ -5,6 +5,7 @@ import (
 	"kratos-admin/app/usercenter/internal/biz"
 	"kratos-admin/app/usercenter/internal/model/sysuser"
 	"kratos-admin/pkg/expr"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
@@ -33,10 +34,11 @@ func (u *userRepo) Create(ctx context.Context, user *biz.User) (id int, err erro
 		Email:    user.Email,
 		Weixin:   user.Weixin,
 		Unionid:  user.Unionid,
-		CreateAt: user.CreateAt,
-		UpdateAt: user.UpdateAt,
+		CreateAt: time.Unix(user.CreateTime,0).Local(),
+		UpdateAt: time.Unix(user.UpdateTime,0).Local(),
 		Operator: user.Operator,
 	}
+
 	err = u.data.db.WithContext(ctx).Create(&m).Error
 	if err != nil {
 		return 0, err
@@ -112,8 +114,8 @@ func UserFromEntity(m *sysuser.SysUser) *biz.User {
 		Email:    m.Email,
 		Weixin:   m.Weixin,
 		Unionid:  m.Unionid,
-		CreateAt: m.CreateAt,
-		UpdateAt: m.UpdateAt,
+		CreateTime: m.CreateAt.Unix(),
+		UpdateTime: m.UpdateAt.Unix(),
 		Operator: m.Operator,
 	}
 }
