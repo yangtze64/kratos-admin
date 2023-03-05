@@ -37,7 +37,6 @@ func (s *UserCenterService) CreateUser(ctx context.Context, req *v1.CreateUserRe
 func (s *UserCenterService) DeleteUser(ctx context.Context, req *v1.DeleteUserReq) (resp *emptypb.Empty, err error) {
 	data := map[string]interface{}{
 		"uid":      req.Uid,
-		"is_delete": 1,
 	}
 	if req.Operator != "" {
 		data["operator"] = req.Operator
@@ -50,6 +49,21 @@ func (s *UserCenterService) DeleteUser(ctx context.Context, req *v1.DeleteUserRe
 	err = s.uc.DeleteUserByUid(ctx, data)
 	return
 }
+
+//func (s *UserCenterService) UpdateUser(ctx context.Context, req *v1.User) (resp *emptypb.Empty, err error) {
+//	user := &biz.User{
+//		Uid:req.Uid,
+//		Username: req.Username,
+//		Realname: req.Realname,
+//		Mobile:req.Mobile,
+//		AreaCode:req.AreaCode,
+//		Email: req.Email,
+//		Weixin: req.Weixin,
+//		Unionid: req.Unionid,
+//		Operator:req.Operator,
+//		UpdateTime: req.UpdateTime,
+//	}
+//}
 
 func (s *UserCenterService) FindUserByUid(ctx context.Context, req *v1.FindUserByUidReq) (resp *v1.User, err error) {
 	u, err := s.uc.GetUserByUid(ctx, req.Uid)
@@ -72,5 +86,6 @@ func (s *UserCenterService) FindUserByUid(ctx context.Context, req *v1.FindUserB
 		Operator: u.Operator,
 	}, nil
 }
+
 
 

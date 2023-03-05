@@ -18,6 +18,19 @@ func UserCheckChain(ctx context.Context, user *User, opts ...UserCheckOption) er
 	return nil
 }
 
+func WithNotExistUser(repo UserRepo) UserCheckOption {
+	return func(ctx context.Context, user *User) error {
+		ok, err := repo.ExistUser(ctx, user.Uid)
+		if err != nil {
+			return err
+		}
+		if ok {
+			return errx.New(errx.UserNotFound)
+		}
+		return nil
+	}
+}
+
 func WithExistUsername(repo UserRepo) UserCheckOption {
 	return func(ctx context.Context, user *User) error {
 		ok, err := repo.ExistUsername(ctx, user.Username)

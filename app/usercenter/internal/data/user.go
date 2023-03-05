@@ -47,7 +47,27 @@ func (u *userRepo) Create(ctx context.Context, user *biz.User) (id int, err erro
 	}
 	return m.Id, nil
 }
-func (u *userRepo) Update(ctx context.Context, uid string,data map[string]interface{}) error {
+func (u *userRepo) Update(ctx context.Context, uid string, user *biz.User) error {
+	m := sysuser.SysUser{
+		Username: user.Username,
+		Realname: user.Realname,
+		Mobile:   user.Mobile,
+		AreaCode: user.AreaCode,
+		Email:    user.Email,
+		Weixin:   user.Weixin,
+		Unionid:  user.Unionid,
+		Operator: user.Operator,
+		UpdateAt: time.Unix(user.UpdateTime, 0),
+	}
+	err := u.data.db.WithContext(ctx).
+		Where(sysuser.Column.Uid.Eq(), uid).
+		Where(sysuser.Column.IsDelete.Eq(), global.ModelNotIsDelete).
+		Updates(m).
+		Error
+	return err
+}
+func (u *userRepo) Delete(ctx context.Context, uid string,data map[string]interface{}) error {
+	data[sysuser.Column.IsDelete.String()] = global.ModelIsDelete
 	err := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).
 		Where(sysuser.Column.Uid.Eq(), uid).
 		Where(sysuser.Column.IsDelete.Eq(), global.ModelNotIsDelete).

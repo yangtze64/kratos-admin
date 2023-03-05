@@ -95,7 +95,7 @@ service UserCenter {
 }
 
 message User {
-    string uid = 1;
+    string uid = 1 [(validate.rules).string.uuid = true];
     string username = 2;
     string realname = 3;
     string mobile = 4;
