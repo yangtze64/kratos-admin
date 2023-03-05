@@ -82,13 +82,12 @@ func (u *UserUseCase) GetUserByUid(ctx context.Context, uid string) (user *User,
 	return
 }
 
-func (u *UserUseCase) DeleteUserByUid(ctx context.Context, data map[string]interface{}) error {
-	uid := data["uid"].(string)
-	delete(data, "uid")
-
-	if err := UserCheckChain(ctx, &User{Uid: uid}, WithNotExistUser(u.repo)); err != nil {
+func (u *UserUseCase) DeleteUserByUid(ctx context.Context, user *User) error {
+	if err := UserCheckChain(ctx, user, WithNotExistUser(u.repo)); err != nil {
 		return err
 	}
-	return u.repo.Delete(ctx, uid, data)
+	uid := user.Uid
+	user.Uid = ""
+	return u.repo.Update(ctx, uid, user)
 }
 

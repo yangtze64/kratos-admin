@@ -24,7 +24,7 @@ func WithNotExistUser(repo UserRepo) UserCheckOption {
 		if err != nil {
 			return err
 		}
-		if ok {
+		if !ok {
 			return errx.New(errx.UserNotFound)
 		}
 		return nil
