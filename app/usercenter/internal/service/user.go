@@ -53,8 +53,8 @@ func (s *UserCenterService) FindUserByUid(ctx context.Context, req *v1.FindUserB
 		Unionid:  u.Unionid,
 		CreateTime: u.CreateTime,
 		UpdateTime: u.UpdateTime,
-		CreateAt: time.Unix(u.CreateTime,0).Local().Format("2006-01-02 15:04:05"),
-		UpdateAt: time.Unix(u.UpdateTime,0).Local().Format("2006-01-02 15:04:05"),
+		CreateAt: time.Unix(u.CreateTime,0).Format("2006-01-02 15:04:05"),
+		UpdateAt: time.Unix(u.UpdateTime,0).Format("2006-01-02 15:04:05"),
 		Operator: u.Operator,
 	}, nil
 }

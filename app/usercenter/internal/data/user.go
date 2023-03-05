@@ -34,8 +34,8 @@ func (u *userRepo) Create(ctx context.Context, user *biz.User) (id int, err erro
 		Email:    user.Email,
 		Weixin:   user.Weixin,
 		Unionid:  user.Unionid,
-		CreateAt: time.Unix(user.CreateTime,0).Local(),
-		UpdateAt: time.Unix(user.UpdateTime,0).Local(),
+		CreateAt: time.Unix(user.CreateTime,0),
+		UpdateAt: time.Unix(user.UpdateTime,0),
 		Operator: user.Operator,
 	}
 
