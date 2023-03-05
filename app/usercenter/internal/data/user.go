@@ -3,7 +3,6 @@ package data
 import (
 	"context"
 	"kratos-admin/utils/global"
-	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
@@ -27,20 +26,18 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 
 func (u *userRepo) Create(ctx context.Context, user *biz.User) (id int, err error) {
 	m := sysuser.SysUser{
-		Uid:      user.Uid,
-		Username: user.Username,
-		Password: user.Password,
-		Realname: user.Realname,
-		Mobile:   user.Mobile,
-		AreaCode: user.AreaCode,
-		Email:    user.Email,
-		Weixin:   user.Weixin,
-		Unionid:  user.Unionid,
-		CreateAt: time.Unix(user.CreateTime,0),
-		UpdateAt: time.Unix(user.UpdateTime,0),
-		Operator: user.Operator,
+		Uid:       user.Uid,
+		Username:  user.Username,
+		Password:  user.Password,
+		Realname:  user.Realname,
+		Mobile:    user.Mobile,
+		AreaCode:  user.AreaCode,
+		Email:     user.Email,
+		Weixin:    user.Weixin,
+		Operator:  user.Operator,
+		CreatedAt: int(user.CreatedAt),
+		UpdatedAt: int(user.UpdatedAt),
 	}
-
 	err = u.data.db.WithContext(ctx).Create(&m).Error
 	if err != nil {
 		return 0, err
@@ -49,29 +46,20 @@ func (u *userRepo) Create(ctx context.Context, user *biz.User) (id int, err erro
 }
 func (u *userRepo) Update(ctx context.Context, uid string, user *biz.User) error {
 	m := sysuser.SysUser{
-		Username: user.Username,
-		Realname: user.Realname,
-		Mobile:   user.Mobile,
-		AreaCode: user.AreaCode,
-		Email:    user.Email,
-		Weixin:   user.Weixin,
-		Unionid:  user.Unionid,
-		Operator: user.Operator,
-		UpdateAt: time.Unix(user.UpdateTime, 0),
+		Username:  user.Username,
+		Realname:  user.Realname,
+		Mobile:    user.Mobile,
+		AreaCode:  user.AreaCode,
+		Email:     user.Email,
+		Weixin:    user.Weixin,
+		Operator:  user.Operator,
+		UpdatedAt: int(user.UpdatedAt),
+		DeletedAt: int(user.DeletedAt),
 	}
 	err := u.data.db.WithContext(ctx).
 		Where(sysuser.Column.Uid.Eq(), uid).
-		Where(sysuser.Column.IsDelete.Eq(), global.ModelNotIsDelete).
+		Where(sysuser.Column.DeletedAt.Eq(), global.ModelNotDeleteAt).
 		Updates(m).
-		Error
-	return err
-}
-func (u *userRepo) Delete(ctx context.Context, uid string,data map[string]interface{}) error {
-	data[sysuser.Column.IsDelete.String()] = global.ModelIsDelete
-	err := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).
-		Where(sysuser.Column.Uid.Eq(), uid).
-		Where(sysuser.Column.IsDelete.Eq(), global.ModelNotIsDelete).
-		Updates(data).
 		Error
 	return err
 }
@@ -80,9 +68,9 @@ func (u *userRepo) List(ctx context.Context) ([]*biz.User, error) {
 }
 func (u *userRepo) FindByUid(ctx context.Context, uid string) (*biz.User, error) {
 	var user sysuser.SysUser
-	err := u.data.db.WithContext(ctx).Omit(sysuser.Column.IsDelete.String(), sysuser.Column.DeleteAt.String()).
+	err := u.data.db.WithContext(ctx).Omit(sysuser.Column.DeletedAt.String()).
 		Where(sysuser.Column.Uid.Eq(), uid).
-		Where(sysuser.Column.IsDelete.Eq(), global.ModelNotIsDelete).
+		Where(sysuser.Column.DeletedAt.Eq(), global.ModelNotDeleteAt).
 		Limit(1).First(&user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -118,16 +106,10 @@ func (u *userRepo) ExistEmail(ctx context.Context, email string) (bool, error) {
 	exist, err := u.exist(ctx, sub)
 	return exist, err
 }
-func (u *userRepo) ExistUnionId(ctx context.Context, unionid string) (bool, error) {
-	sub := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Select(sysuser.Column.Id.String()).
-		Where(sysuser.Column.Unionid.Eq(),unionid)
-	exist, err := u.exist(ctx, sub)
-	return exist, err
-}
 
 func (u *userRepo) exist(ctx context.Context, sub *gorm.DB) (bool, error) {
 	var exist bool
-	sub.Where(sysuser.Column.IsDelete.Eq(), global.ModelNotIsDelete).Limit(1)
+	sub.Where(sysuser.Column.DeletedAt.Eq(), global.ModelNotDeleteAt).Limit(1)
 	// "IF(u.id > 0,1,0) as exist"
 	st := sysuser.Column.Id.Expr(func(f expr.String) expr.String {
 		return "IF(u.`" + f + "` > 0, " + expr.Symbol + ", " + expr.Symbol + ") as exist"
@@ -141,16 +123,16 @@ func (u *userRepo) exist(ctx context.Context, sub *gorm.DB) (bool, error) {
 
 func UserFromEntity(m *sysuser.SysUser) *biz.User {
 	return &biz.User{
-		Uid:      m.Uid,
-		Username: m.Username,
-		Realname: m.Realname,
-		Mobile:   m.Mobile,
-		AreaCode: m.AreaCode,
-		Email:    m.Email,
-		Weixin:   m.Weixin,
-		Unionid:  m.Unionid,
-		CreateTime: m.CreateAt.Unix(),
-		UpdateTime: m.UpdateAt.Unix(),
-		Operator: m.Operator,
+		Uid:       m.Uid,
+		Username:  m.Username,
+		Realname:  m.Realname,
+		Mobile:    m.Mobile,
+		AreaCode:  m.AreaCode,
+		Email:     m.Email,
+		Weixin:    m.Weixin,
+		Operator:  m.Operator,
+		CreatedAt: int64(m.CreatedAt),
+		UpdatedAt: int64(m.UpdatedAt),
+
 	}
 }

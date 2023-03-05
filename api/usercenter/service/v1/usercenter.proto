@@ -49,7 +49,7 @@ service UserCenter {
         };
     }
     // 更新用户
-    rpc UpdateUser (User) returns (google.protobuf.Empty) {
+    rpc UpdateUser (UpdateUser.req) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             put: "/usercenter/v1/users/{uid}"
             body: "*"
@@ -95,19 +95,18 @@ service UserCenter {
 }
 
 message User {
-    string uid = 1 [(validate.rules).string.uuid = true];
+    string uid = 1;
     string username = 2;
     string realname = 3;
     string mobile = 4;
     int32 area_code = 5;
     string email = 6;
     string weixin = 7;
-    string unionid = 8;
     string operator = 9;
-    string create_at = 10;
-    string update_at = 11;
-    int64 create_time = 12;
-    int64 update_time = 13;
+    int64 created_at = 10;
+    int64 updated_at = 11;
+    string created_date = 12;
+    string updated_date = 13;
 }
 
 message Register {
@@ -170,21 +169,33 @@ message CreateUser {
         string password = 5 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*.-]{6,20}$"}];
         string email = 6 [(validate.rules).string = {ignore_empty:true, email:true}];
         string weixin = 7 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
-        string unionid = 8;
-        string operator = 9;
-        int64 create_time = 10;
-        int64 update_time = 11;
+        string operator = 8;
+        int64 created_at = 9;
+        int64 updated_at = 10;
     }
     message resp {
         int64 id = 1;
         string uid = 2;
     }
 }
+message UpdateUser {
+    message req {
+        string uid = 1 [(validate.rules).string.uuid = true];
+        string username = 2 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_.@-]{6,20}$"}];
+        string realname = 3;
+        string mobile = 4 [(validate.rules).string = {pattern:"^[0-9]{6,20}$"}];
+        int32 area_code = 5 [(validate.rules).int32 = {gte: 1,  lte: 9999}];
+        string email = 6 [(validate.rules).string = {ignore_empty:true, email:true}];
+        string weixin = 7 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
+        string operator = 8;
+        int64 updated_at = 9;
+    }
+}
 message DeleteUser {
     message req {
         string uid = 1 [(validate.rules).string.uuid = true];
         string operator = 2;
-        int64 delete_time = 3;
+        int64 deleted_at = 3;
     }
 }
 
@@ -193,22 +204,21 @@ message UserFilter {
     repeated string mobile = 2;
     string area_code = 3;
     string username = 4;
-    string username_pre= 5;
+    string username_fuzzy= 5;
     string realname = 6;
-    string realname_pre = 7;
+    string realname_fuzzy = 7;
     string email = 8;
-    string email_pre = 9;
+    string email_fuzzy = 9;
     string weixin = 10;
-    string unionid = 11;
-    string create_at = 12;
-    string create_at_start = 13;
-    string create_at_end = 14;
-    string update_at = 15;
-    string update_at_start = 16;
-    string update_at_end = 17;
-    repeated string operator = 18;
-    int64 page = 19;
-    int64 limit = 20;
+    int64 created_at = 11;
+    int64 updated_at = 12;
+    string created_date_start = 13;
+    string created_date_end = 14;
+    string updated_date_start = 15;
+    string updated_date_end = 16;
+    repeated string operator = 17;
+    int64 page = 18;
+    int64 limit = 19;
 }
 message ListUser {
     message resp {

@@ -17,23 +17,21 @@ type User struct {
 	AreaCode int32
 	Email    string
 	Weixin   string
-	Unionid  string
 	Operator string
-	CreateTime int64
-	UpdateTime int64
+	CreatedAt int64
+	UpdatedAt int64
+	DeletedAt int64
 }
 
 type UserRepo interface {
 	Create(ctx context.Context, user *User) (id int, err error)
 	Update(ctx context.Context, uid string, user *User) error
-	Delete(ctx context.Context, uid string, data map[string]interface{}) error
 	List(ctx context.Context) ([]*User, error)
 	FindByUid(ctx context.Context, uid string) (*User, error)
 	ExistUser(ctx context.Context, uid string) (bool, error)
 	ExistUsername(ctx context.Context, username string) (bool, error)
 	ExistMobile(ctx context.Context, mobile string, areaCode int32) (bool, error)
 	ExistEmail(ctx context.Context, email string) (bool, error)
-	ExistUnionId(ctx context.Context, unionid string) (bool, error)
 }
 
 type UserUseCase struct {
@@ -55,9 +53,6 @@ func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error)
 	if user.Email != "" {
 		checkOptions = append(checkOptions, WithExistEmail(u.repo))
 	}
-	if user.Unionid != "" {
-		checkOptions = append(checkOptions, WithExistUnionId(u.repo))
-	}
 	if user.AreaCode == 0 {
 		user.AreaCode = 86
 	}
@@ -68,11 +63,11 @@ func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error)
 	user.Uid = utils.NewUuid()
 	user.Password = utils.GenPasswd(user.Password)
 	nowTime := time.Now().Unix()
-	if user.CreateTime <= 0 {
-		user.CreateTime = nowTime
+	if user.CreatedAt <= 0 {
+		user.CreatedAt = nowTime
 	}
-	if user.UpdateTime <= 0 {
-		user.UpdateTime = nowTime
+	if user.UpdatedAt <= 0 {
+		user.UpdatedAt = nowTime
 	}
 	id, err := u.repo.Create(ctx, user)
 	if err != nil {

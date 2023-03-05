@@ -15,7 +15,6 @@ const (
 	UserNameExist    ErrxReason = "USERNAME_EXIST"
 	UserMobileExist  ErrxReason = "USER_MOBILE_EXIST"
 	UserEmailExist   ErrxReason = "USER_EMAIL_EXIST"
-	UserUnionIdExist ErrxReason = "USER_UNIONID_EXIST"
 	UserNotFound     ErrxReason = "USER_NOT_FOUND"
 )
 
@@ -27,7 +26,6 @@ var reasonMessage = map[ErrxReason]string{
 	UserNameExist:    "the username already exists",
 	UserMobileExist:  "the user mobile already exists",
 	UserEmailExist:   "the user email already exists",
-	UserUnionIdExist: "the user unionid already exists",
 	UserNotFound:     "This user was not found",
 }
 
@@ -39,7 +37,6 @@ var reasonCode = map[ErrxReason]int{
 	UserNameExist:    http.StatusConflict,
 	UserMobileExist:  http.StatusConflict,
 	UserEmailExist:   http.StatusConflict,
-	UserUnionIdExist: http.StatusConflict,
 	UserNotFound:     http.StatusNotFound,
 }
 

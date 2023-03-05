@@ -69,16 +69,3 @@ func WithExistEmail(repo UserRepo) UserCheckOption {
 		return nil
 	}
 }
-
-func WithExistUnionId(repo UserRepo) UserCheckOption {
-	return func(ctx context.Context, user *User) error {
-		ok, err := repo.ExistUnionId(ctx, user.Unionid)
-		if err != nil {
-			return err
-		}
-		if ok {
-			return errx.New(errx.UserUnionIdExist)
-		}
-		return nil
-	}
-}
