@@ -80,3 +80,8 @@ func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error)
 	user.Id = id
 	return user, nil
 }
+
+func (u *UserUseCase) GetUserByUid(ctx context.Context, uid string) (user *User, err error) {
+	user, err = u.repo.FindByUid(ctx, uid)
+	return
+}

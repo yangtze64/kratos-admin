@@ -16,6 +16,7 @@ const (
 	UserMobileExist  ErrxReason = "USER_MOBILE_EXIST"
 	UserEmailExist   ErrxReason = "USER_EMAIL_EXIST"
 	UserUnionIdExist ErrxReason = "USER_UNIONID_EXIST"
+	UserNotFound     ErrxReason = "USER_NOT_FOUND"
 )
 
 var reasonMessage = map[ErrxReason]string{
@@ -27,6 +28,7 @@ var reasonMessage = map[ErrxReason]string{
 	UserMobileExist:  "the user mobile already exists",
 	UserEmailExist:   "the user email already exists",
 	UserUnionIdExist: "the user unionid already exists",
+	UserNotFound:     "This user was not found",
 }
 
 var reasonCode = map[ErrxReason]int{
@@ -38,6 +40,7 @@ var reasonCode = map[ErrxReason]int{
 	UserMobileExist:  http.StatusConflict,
 	UserEmailExist:   http.StatusConflict,
 	UserUnionIdExist: http.StatusConflict,
+	UserNotFound:     http.StatusNotFound,
 }
 
 func New(reason ErrxReason) *errors.Error {

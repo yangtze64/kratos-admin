@@ -8,11 +8,11 @@ server:
 data:
   database:
     default:
-      dsn: root:123456@tcp(127.0.0.1:3307)/gin-admin?charset=utf8mb4&parseTime=True&loc=PRC
+      dsn: root:123456@tcp(127.0.0.1:3307)/admin?charset=utf8mb4&parseTime=True&loc=PRC
       max_conn: 10
       max_idle: 3
     user:
-      dsn: root:123456@tcp(127.0.0.1:3307)/gin-admin?charset=utf8mb4&parseTime=True&loc=PRC
+      dsn: root:123456@tcp(127.0.0.1:3307)/admin?charset=utf8mb4&parseTime=True&loc=PRC
       max_conn: 10
       max_idle: 3
 

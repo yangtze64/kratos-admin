@@ -1,16 +1,18 @@
-package model
+package sysuser
 
 import (
 	"database/sql"
 	"time"
 )
 
-var TableSysUserName = "sys_user"
+var (
+	TableSysUserName = "sys_user"
+)
 
 // SysUser mapped from table <sys_user>
 type SysUser struct {
-	ID       int          `gorm:"column:id;type:int(11) unsigned;primary_key;AUTO_INCREMENT" json:"id"`
-	UID      string       `gorm:"column:uid;type:char(36);comment:UID;NOT NULL" json:"uid"`
+	Id       int          `gorm:"column:id;type:int(11) unsigned;primary_key;AUTO_INCREMENT" json:"id"`
+	Uid      string       `gorm:"column:uid;type:char(36);comment:UID;NOT NULL" json:"uid"`
 	Username string       `gorm:"column:username;type:varchar(100);comment:用户名;NOT NULL" json:"username"`
 	Password string       `gorm:"column:password;type:char(32);comment:密码;NOT NULL" json:"password"`
 	Realname string       `gorm:"column:realname;type:varchar(100);comment:真实姓名;NOT NULL" json:"realname"`

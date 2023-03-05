@@ -3,6 +3,7 @@ package util
 import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"kratos-admin/app/usercenter/internal/conf"
 )
@@ -39,6 +40,7 @@ func getGormInstance(c *conf.Data_Mysql, fns ...func() *gorm.Config) (*gorm.DB, 
 
 func newGormConf(c *conf.Data_Mysql) *gorm.Config {
 	return &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   "",
 			SingularTable: true,

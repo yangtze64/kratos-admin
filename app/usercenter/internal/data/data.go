@@ -1,12 +1,13 @@
 package data
 
 import (
+	"kratos-admin/app/usercenter/internal/conf"
+	"kratos-admin/app/usercenter/internal/data/util"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"gorm.io/gorm"
-	"kratos-admin/app/usercenter/internal/conf"
-	"kratos-admin/app/usercenter/internal/data/util"
 )
 
 // ProviderSet is data providers.
@@ -20,7 +21,6 @@ type (
 		db *gorm.DB
 		//udb *gorm.DB
 		rds *redis.Client
-		//um  *sysUser1.Query
 	}
 )
 
@@ -38,10 +38,6 @@ func NewDefaultDb(c *conf.Data) (DefaultDB, error) {
 //		return nil, err
 //	}
 //	return UserDB(db), nil
-//}
-
-//func NewUserQuery(db DefaultDB) *sysUser1.Query {
-//	return sysUser1.Use((*gorm.DB)(db))
 //}
 
 func NewDefaultRds(c *conf.Data) DefaultRDS {
