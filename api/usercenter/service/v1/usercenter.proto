@@ -183,6 +183,8 @@ message CreateUser {
 message DeleteUser {
     message req {
         string uid = 1 [(validate.rules).string.uuid = true];
+        string operator = 2;
+        int64 delete_time = 3;
     }
 }
 

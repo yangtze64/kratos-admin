@@ -2,13 +2,15 @@ package data
 
 import (
 	"context"
-	"kratos-admin/app/usercenter/internal/biz"
-	"kratos-admin/app/usercenter/internal/model/sysuser"
-	"kratos-admin/pkg/expr"
+	"kratos-admin/utils/global"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
+	"kratos-admin/app/usercenter/internal/biz"
+	"kratos-admin/app/usercenter/internal/model/sysuser"
+	"kratos-admin/pkg/expr"
+	"kratos-admin/utils/errx"
 )
 
 type userRepo struct {
@@ -45,11 +47,13 @@ func (u *userRepo) Create(ctx context.Context, user *biz.User) (id int, err erro
 	}
 	return m.Id, nil
 }
-func (u *userRepo) Update(ctx context.Context, uid string) (bool, error) {
-	return false, nil
-}
-func (u *userRepo) Delete(ctx context.Context, uid string) (bool, error) {
-	return false, nil
+func (u *userRepo) Update(ctx context.Context, uid string,data map[string]interface{}) error {
+	err := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).
+		Where(sysuser.Column.Uid.Eq(), uid).
+		Where(sysuser.Column.IsDelete.Eq(), global.ModelNotIsDelete).
+		Updates(data).
+		Error
+	return err
 }
 func (u *userRepo) List(ctx context.Context) ([]*biz.User, error) {
 	return nil, nil
@@ -57,11 +61,22 @@ func (u *userRepo) List(ctx context.Context) ([]*biz.User, error) {
 func (u *userRepo) FindByUid(ctx context.Context, uid string) (*biz.User, error) {
 	var user sysuser.SysUser
 	err := u.data.db.WithContext(ctx).Omit(sysuser.Column.IsDelete.String(), sysuser.Column.DeleteAt.String()).
-		Where(sysuser.Column.Uid.Eq(), uid).Limit(1).First(&user).Error
+		Where(sysuser.Column.Uid.Eq(), uid).
+		Where(sysuser.Column.IsDelete.Eq(), global.ModelNotIsDelete).
+		Limit(1).First(&user).Error
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errx.New(errx.UserNotFound)
+		}
 		return nil, err
 	}
 	return UserFromEntity(&user), nil
+}
+func (u *userRepo) ExistUser(ctx context.Context, uid string) (bool, error) {
+	sub := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Select(sysuser.Column.Id.String()).
+		Where(sysuser.Column.Uid.Eq(), uid)
+	exist, err := u.exist(ctx, sub)
+	return exist, err
 }
 func (u *userRepo) ExistUsername(ctx context.Context, username string) (bool, error) {
 	sub := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Select(sysuser.Column.Id.String()).
@@ -92,7 +107,7 @@ func (u *userRepo) ExistUnionId(ctx context.Context, unionid string) (bool, erro
 
 func (u *userRepo) exist(ctx context.Context, sub *gorm.DB) (bool, error) {
 	var exist bool
-	sub.Where(sysuser.Column.IsDelete.Eq(), 0).Limit(1)
+	sub.Where(sysuser.Column.IsDelete.Eq(), global.ModelNotIsDelete).Limit(1)
 	// "IF(u.id > 0,1,0) as exist"
 	st := sysuser.Column.Id.Expr(func(f expr.String) expr.String {
 		return "IF(u.`" + f + "` > 0, " + expr.Symbol + ", " + expr.Symbol + ") as exist"

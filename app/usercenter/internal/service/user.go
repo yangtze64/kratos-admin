@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
-	"gorm.io/gorm"
+	"google.golang.org/protobuf/types/known/emptypb"
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/biz"
-	"kratos-admin/utils/errx"
+	"kratos-admin/utils/global"
 	"time"
 )
 
@@ -34,12 +34,26 @@ func (s *UserCenterService) CreateUser(ctx context.Context, req *v1.CreateUserRe
 	return &v1.CreateUserResp{}, nil
 }
 
+func (s *UserCenterService) DeleteUser(ctx context.Context, req *v1.DeleteUserReq) (resp *emptypb.Empty, err error) {
+	data := map[string]interface{}{
+		"uid":      req.Uid,
+		"is_delete": 1,
+	}
+	if req.Operator != "" {
+		data["operator"] = req.Operator
+	}
+	if req.DeleteTime <= 0 {
+		data["delete_at"] = time.Now()
+	} else {
+		data["delete_at"] = time.Unix(req.DeleteTime, 0)
+	}
+	err = s.uc.DeleteUserByUid(ctx, data)
+	return
+}
+
 func (s *UserCenterService) FindUserByUid(ctx context.Context, req *v1.FindUserByUidReq) (resp *v1.User, err error) {
 	u, err := s.uc.GetUserByUid(ctx, req.Uid)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, errx.New(errx.UserNotFound)
-		}
 		return nil, err
 	}
 	return &v1.User{
@@ -53,8 +67,8 @@ func (s *UserCenterService) FindUserByUid(ctx context.Context, req *v1.FindUserB
 		Unionid:  u.Unionid,
 		CreateTime: u.CreateTime,
 		UpdateTime: u.UpdateTime,
-		CreateAt: time.Unix(u.CreateTime,0).Format("2006-01-02 15:04:05"),
-		UpdateAt: time.Unix(u.UpdateTime,0).Format("2006-01-02 15:04:05"),
+		CreateAt: time.Unix(u.CreateTime,0).Format(global.TimeFormat),
+		UpdateAt: time.Unix(u.UpdateTime,0).Format(global.TimeFormat),
 		Operator: u.Operator,
 	}, nil
 }

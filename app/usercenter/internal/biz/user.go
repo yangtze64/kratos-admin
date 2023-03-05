@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"kratos-admin/utils"
+	"kratos-admin/utils/errx"
 	"time"
 )
 
@@ -25,10 +26,10 @@ type User struct {
 
 type UserRepo interface {
 	Create(ctx context.Context, user *User) (id int, err error)
-	Update(ctx context.Context, uid string) (bool, error)
-	Delete(ctx context.Context, uid string) (bool, error)
+	Update(ctx context.Context, uid string,data map[string]interface{}) error
 	List(ctx context.Context) ([]*User, error)
 	FindByUid(ctx context.Context, uid string) (*User, error)
+	ExistUser(ctx context.Context, uid string) (bool, error)
 	ExistUsername(ctx context.Context, username string) (bool, error)
 	ExistMobile(ctx context.Context, mobile string, areaCode int32) (bool, error)
 	ExistEmail(ctx context.Context, email string) (bool, error)
@@ -84,4 +85,17 @@ func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error)
 func (u *UserUseCase) GetUserByUid(ctx context.Context, uid string) (user *User, err error) {
 	user, err = u.repo.FindByUid(ctx, uid)
 	return
+}
+
+func (u *UserUseCase) DeleteUserByUid(ctx context.Context, data map[string]interface{}) error {
+	uid := data["uid"].(string)
+	delete(data,"uid")
+	ok, err := u.repo.ExistUser(ctx, uid)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errx.New(errx.UserNotFound)
+	}
+	return u.repo.Update(ctx, uid, data)
 }
