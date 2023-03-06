@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/errors"
 	"kratos-admin/utils/global"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -63,8 +64,39 @@ func (u *userRepo) Update(ctx context.Context, uid string, user *biz.User) error
 		Error
 	return err
 }
-func (u *userRepo) List(ctx context.Context, user **biz.User) (list []*biz.User, err error) {
-
+func (u *userRepo) List(ctx context.Context, user *biz.User) (list []*biz.User, err error) {
+	userCondOptions := []UserCondOption{
+		WithIdWhere(),
+		WithUidWhere(),
+		WithMobileWhere(),
+		WithUsernameWhere(),
+		WithUsernameFuzzyWhere(),
+		WithEmailWhere(),
+		WithEmailFuzzyWhere(),
+		WithRealnameWhere(),
+		WithRealnameFuzzyWhere(),
+		WithWeixinWhere(),
+		WithOperatorWhere(),
+		WithCreatedAtWhere(),
+		WithUpdatedAtWhere(),
+		WithPager(),
+	}
+	query := u.data.db.WithContext(ctx).Omit(sysuser.Column.DeletedAt.String())
+	if query, err = UserCondChain(query, user, userCondOptions...); err != nil {
+		return nil, err
+	}
+	var users []*sysuser.SysUser
+	if err = query.Find(&users).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return list, nil
+		}
+		return nil, err
+	}
+	if len(users) > 0 {
+		for _, v := range users {
+			list = append(list, UserFromEntity(v))
+		}
+	}
 	return nil, nil
 }
 func (u *userRepo) FindByUid(ctx context.Context, uid string) (*biz.User, error) {
@@ -74,7 +106,7 @@ func (u *userRepo) FindByUid(ctx context.Context, uid string) (*biz.User, error)
 		Where(sysuser.Column.DeletedAt.Eq(), global.ModelNotDeleteAt).
 		Limit(1).First(&user).Error
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errx.New(errx.UserNotFound)
 		}
 		return nil, err
@@ -100,7 +132,6 @@ func (u *userRepo) ExistUsername(ctx context.Context, username string, excludeUi
 	exist, err := u.exist(ctx, sub)
 	return exist, err
 }
-
 func (u *userRepo) ExistMobile(ctx context.Context, mobile string, areaCode int32, excludeUids ...string) (bool, error) {
 	sub := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Select(sysuser.Column.Id.String()).
 		Where(sysuser.Column.Mobile.Eq(), mobile).
@@ -128,7 +159,6 @@ func (u *userRepo) ExistEmail(ctx context.Context, email string, excludeUids ...
 	exist, err := u.exist(ctx, sub)
 	return exist, err
 }
-
 func (u *userRepo) exist(ctx context.Context, sub *gorm.DB) (bool, error) {
 	var exist bool
 	sub.Where(sysuser.Column.DeletedAt.Eq(), global.ModelNotDeleteAt).Limit(1)
@@ -145,6 +175,7 @@ func (u *userRepo) exist(ctx context.Context, sub *gorm.DB) (bool, error) {
 
 func UserFromEntity(m *sysuser.SysUser) *biz.User {
 	return &biz.User{
+		Id:        m.Id,
 		Uid:       m.Uid,
 		Username:  m.Username,
 		Realname:  m.Realname,
