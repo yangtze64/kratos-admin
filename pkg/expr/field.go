@@ -1,7 +1,5 @@
 package expr
 
-import "strings"
-
 var (
 	Symbol String = "?"
 )
@@ -27,7 +25,7 @@ func (f String) Eq() string {
 }
 func (f String) Neq() string {
 	return f.expr(func(f String) String {
-		f = "`" + f + "` != "+ Symbol
+		f = "`" + f + "` != " + Symbol
 		return f
 	}).toString()
 }
@@ -39,45 +37,45 @@ func (f String) Gt() string {
 }
 func (f String) Gte() string {
 	return f.expr(func(f String) String {
-		f = "`" + f + "` >= "+ Symbol
+		f = "`" + f + "` >= " + Symbol
 		return f
 	}).toString()
 }
 func (f String) Lt() string {
 	return f.expr(func(f String) String {
-		f = "`" + f + "` < "+ Symbol
+		f = "`" + f + "` < " + Symbol
 		return f
 	}).toString()
 }
 func (f String) Lte() string {
 	return f.expr(func(f String) String {
-		f = "`" + f + "` <= "+ Symbol
+		f = "`" + f + "` <= " + Symbol
 		return f
 	}).toString()
 }
-func (f String) In(n int) string {
+func (f String) In() string {
 	return f.expr(func(f String) String {
-		str := String(strings.TrimRight(strings.Repeat(string(Symbol+","),n),","))
-		f = "`" + f + "` IN ("+ str +")"
+		//str := String(strings.TrimRight(strings.Repeat(string(Symbol+","), n), ","))
+		f = "`" + f + "` IN ?"
 		return f
 	}).toString()
 }
-func (f String) NotIn(n int) string {
+func (f String) NotIn() string {
 	return f.expr(func(f String) String {
-		str := String(strings.TrimRight(strings.Repeat(string(Symbol+","),n),","))
-		f = "`" + f + "` NOT IN ("+ str +")"
+		//str := String(strings.TrimRight(strings.Repeat(string(Symbol+","), n), ","))
+		f = "`" + f + "` NOT IN ?"
 		return f
 	}).toString()
 }
 func (f String) Between() string {
 	return f.expr(func(f String) String {
-		f = "`" + f + "` BETWEEN "+ Symbol +" AND "+ Symbol
+		f = "`" + f + "` BETWEEN " + Symbol + " AND " + Symbol
 		return f
 	}).toString()
 }
 func (f String) NotBetween() string {
 	return f.expr(func(f String) String {
-		f = "`" + f + "` NOT BETWEEN "+ Symbol +" AND "+ Symbol
+		f = "`" + f + "` NOT BETWEEN " + Symbol + " AND " + Symbol
 		return f
 	}).toString()
 }

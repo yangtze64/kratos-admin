@@ -1,6 +1,7 @@
 package global
 
 const (
-	TimeFormat = "2006-01-02 15:04:05"
-	ModelNotDeleteAt = 0
+	DefaultMobileAreaCode int32 = 86
+	TimeFormat                  = "2006-01-02 15:04:05"
+	ModelNotDeleteAt      int   = 0
 )

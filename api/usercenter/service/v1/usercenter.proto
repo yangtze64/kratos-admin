@@ -111,13 +111,13 @@ message User {
 
 message Register {
     message req {
-        string username = 1 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_.@-]{6,20}$"}];
+        string username = 1 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_.@-]{5,19}$"}];
         string realname = 2;
         string mobile = 3 [(validate.rules).string = {pattern:"^[0-9]{6,20}$"}];
         int32 area_code = 4 [(validate.rules).int32 = {ignore_empty:true, gte: 1,  lte: 9999}];
-        string password = 5 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*.-]{6,20}$"}];
-        string password_review = 6 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*.-]{6,20}$"}];
-        string email = 7 [(validate.rules).string = {ignore_empty:true, email:true}];
+        string password = 5 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*.-]{5,19}$"}];
+        string password_review = 6 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*.-]{5,19}$"}];
+        string email = 7 [(validate.rules).string = {email:true}];
         string weixin = 8 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
         string operator = 9;
     }
@@ -162,12 +162,12 @@ message SimulationLogin {
 
 message CreateUser {
     message req {
-        string username = 1 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_.@-]{6,20}$"}];
+        string username = 1 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_.@-]{5,19}$"}];
         string realname = 2;
         string mobile = 3 [(validate.rules).string = {pattern:"^[0-9]{6,20}$"}];
-        int32 area_code = 4 [(validate.rules).int32 = {gte: 1,  lte: 9999}];
-        string password = 5 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*.-]{6,20}$"}];
-        string email = 6 [(validate.rules).string = {ignore_empty:true, email:true}];
+        int32 area_code = 4 [(validate.rules).int32 = {ignore_empty:true, gte: 1,  lte: 9999}];
+        string password = 5 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*.-]{5,19}$"}];
+        string email = 6 [(validate.rules).string = {email:true}];
         string weixin = 7 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
         string operator = 8;
         int64 created_at = 9;
@@ -181,10 +181,10 @@ message CreateUser {
 message UpdateUser {
     message req {
         string uid = 1 [(validate.rules).string.uuid = true];
-        string username = 2 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_.@-]{6,20}$"}];
+        string username = 2 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_.@-]{5,19}$"}];
         string realname = 3;
-        string mobile = 4 [(validate.rules).string = {pattern:"^[0-9]{6,20}$"}];
-        int32 area_code = 5 [(validate.rules).int32 = {gte: 1,  lte: 9999}];
+        string mobile = 4 [(validate.rules).string = {ignore_empty:true, pattern:"^[0-9]{6,20}$"}];
+        int32 area_code = 5 [(validate.rules).int32 = {ignore_empty:true, gte: 1,  lte: 9999}];
         string email = 6 [(validate.rules).string = {ignore_empty:true, email:true}];
         string weixin = 7 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
         string operator = 8;
@@ -200,25 +200,26 @@ message DeleteUser {
 }
 
 message UserFilter {
-    repeated string uid = 1;
-    repeated string mobile = 2;
-    string area_code = 3;
-    string username = 4;
-    string username_fuzzy= 5;
-    string realname = 6;
-    string realname_fuzzy = 7;
-    string email = 8;
-    string email_fuzzy = 9;
-    string weixin = 10;
-    int64 created_at = 11;
-    int64 updated_at = 12;
-    string created_date_start = 13;
-    string created_date_end = 14;
-    string updated_date_start = 15;
-    string updated_date_end = 16;
-    repeated string operator = 17;
-    int64 page = 18;
-    int64 limit = 19;
+    repeated int64 id = 1;
+    repeated string uid = 2;
+    string mobile = 3;
+    int32 area_code = 4;
+    string username = 5;
+    string username_fuzzy= 6;
+    string realname = 7;
+    string realname_fuzzy = 8;
+    string email = 9;
+    string email_fuzzy = 10;
+    string weixin = 11;
+    int64 created_at = 12;
+    int64 updated_at = 13;
+    string created_date_start = 14;
+    string created_date_end = 15;
+    string updated_date_start = 16;
+    string updated_date_end = 17;
+    repeated string operator = 18;
+    int64 page = 19 [(validate.rules).int64 = {gte: 1}];
+    int64 limit = 20 [(validate.rules).int64 = {gte: 1,  lte: 100}];
 }
 message ListUser {
     message resp {

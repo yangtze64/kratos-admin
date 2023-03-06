@@ -31,9 +31,9 @@ func WithNotExistUser(repo UserRepo) UserCheckOption {
 	}
 }
 
-func WithExistUsername(repo UserRepo) UserCheckOption {
+func WithExistUsername(repo UserRepo, excludeUids ...string) UserCheckOption {
 	return func(ctx context.Context, user *User) error {
-		ok, err := repo.ExistUsername(ctx, user.Username)
+		ok, err := repo.ExistUsername(ctx, user.Username, excludeUids...)
 		if err != nil {
 			return err
 		}
@@ -44,9 +44,9 @@ func WithExistUsername(repo UserRepo) UserCheckOption {
 	}
 }
 
-func WithExistMobile(repo UserRepo) UserCheckOption {
+func WithExistMobile(repo UserRepo, excludeUids ...string) UserCheckOption {
 	return func(ctx context.Context, user *User) error {
-		ok, err := repo.ExistMobile(ctx, user.Mobile, user.AreaCode)
+		ok, err := repo.ExistMobile(ctx, user.Mobile, user.AreaCode, excludeUids...)
 		if err != nil {
 			return err
 		}
@@ -57,9 +57,9 @@ func WithExistMobile(repo UserRepo) UserCheckOption {
 	}
 }
 
-func WithExistEmail(repo UserRepo) UserCheckOption {
+func WithExistEmail(repo UserRepo, excludeUids ...string) UserCheckOption {
 	return func(ctx context.Context, user *User) error {
-		ok, err := repo.ExistEmail(ctx, user.Email)
+		ok, err := repo.ExistEmail(ctx, user.Email, excludeUids...)
 		if err != nil {
 			return err
 		}

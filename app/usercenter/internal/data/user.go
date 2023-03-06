@@ -63,7 +63,8 @@ func (u *userRepo) Update(ctx context.Context, uid string, user *biz.User) error
 		Error
 	return err
 }
-func (u *userRepo) List(ctx context.Context) ([]*biz.User, error) {
+func (u *userRepo) List(ctx context.Context, user **biz.User) (list []*biz.User, err error) {
+
 	return nil, nil
 }
 func (u *userRepo) FindByUid(ctx context.Context, uid string) (*biz.User, error) {
@@ -86,23 +87,44 @@ func (u *userRepo) ExistUser(ctx context.Context, uid string) (bool, error) {
 	exist, err := u.exist(ctx, sub)
 	return exist, err
 }
-func (u *userRepo) ExistUsername(ctx context.Context, username string) (bool, error) {
+func (u *userRepo) ExistUsername(ctx context.Context, username string, excludeUids ...string) (bool, error) {
 	sub := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Select(sysuser.Column.Id.String()).
 		Where(sysuser.Column.Username.Eq(), username)
+	if exn := len(excludeUids); exn > 0 {
+		if exn == 1 {
+			sub.Where(sysuser.Column.Uid.Neq(), excludeUids[0])
+		} else {
+			sub.Where(sysuser.Column.Uid.NotIn(), excludeUids)
+		}
+	}
 	exist, err := u.exist(ctx, sub)
 	return exist, err
 }
 
-func (u *userRepo) ExistMobile(ctx context.Context, mobile string, areaCode int32) (bool, error) {
+func (u *userRepo) ExistMobile(ctx context.Context, mobile string, areaCode int32, excludeUids ...string) (bool, error) {
 	sub := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Select(sysuser.Column.Id.String()).
-		Where(sysuser.Column.Mobile.Eq(),mobile).
-		Where(sysuser.Column.AreaCode.Eq(),areaCode)
+		Where(sysuser.Column.Mobile.Eq(), mobile).
+		Where(sysuser.Column.AreaCode.Eq(), areaCode)
+	if exn := len(excludeUids); exn > 0 {
+		if exn == 1 {
+			sub.Where(sysuser.Column.Uid.Neq(), excludeUids[0])
+		} else {
+			sub.Where(sysuser.Column.Uid.NotIn(), excludeUids)
+		}
+	}
 	exist, err := u.exist(ctx, sub)
 	return exist, err
 }
-func (u *userRepo) ExistEmail(ctx context.Context, email string) (bool, error) {
+func (u *userRepo) ExistEmail(ctx context.Context, email string, excludeUids ...string) (bool, error) {
 	sub := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Select(sysuser.Column.Id.String()).
-		Where(sysuser.Column.Email.Eq(),email)
+		Where(sysuser.Column.Email.Eq(), email)
+	if exn := len(excludeUids); exn > 0 {
+		if exn == 1 {
+			sub.Where(sysuser.Column.Uid.Neq(), excludeUids[0])
+		} else {
+			sub.Where(sysuser.Column.Uid.NotIn(), excludeUids)
+		}
+	}
 	exist, err := u.exist(ctx, sub)
 	return exist, err
 }
@@ -133,6 +155,5 @@ func UserFromEntity(m *sysuser.SysUser) *biz.User {
 		Operator:  m.Operator,
 		CreatedAt: int64(m.CreatedAt),
 		UpdatedAt: int64(m.UpdatedAt),
-
 	}
 }
