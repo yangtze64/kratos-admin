@@ -4,14 +4,14 @@
  Source Server         : docker-mysql
  Source Server Type    : MySQL
  Source Server Version : 50741
- Source Host           : 127.0.0.1:3307
- Source Schema         : admin
+ Source Host           : localhost:3307
+ Source Schema         : kratos-admin
 
  Target Server Type    : MySQL
  Target Server Version : 50741
  File Encoding         : 65001
 
- Date: 05/03/2023 20:49:10
+ Date: 06/03/2023 16:13:47
 */
 
 SET NAMES utf8mb4;
