@@ -13,9 +13,8 @@ type UserCenterService struct {
 	v1.UnimplementedUserCenterServer
 
 	uc *biz.UserUseCase
-	pc *biz.PassportUseCase
 }
 
-func NewUserCenterService(uc *biz.UserUseCase, pc *biz.PassportUseCase) *UserCenterService {
-	return &UserCenterService{uc: uc, pc: pc}
+func NewUserCenterService(uc *biz.UserUseCase) *UserCenterService {
+	return &UserCenterService{uc: uc}
 }

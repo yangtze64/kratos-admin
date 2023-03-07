@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 	"kratos-admin/app/usercenter/internal/biz"
 	"kratos-admin/app/usercenter/internal/model/sysuser"
-	"kratos-admin/utils/global"
+	"kratos-admin/pkg/global"
 	"time"
 )
 

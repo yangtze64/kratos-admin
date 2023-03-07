@@ -2,7 +2,7 @@ package biz
 
 import (
 	"context"
-	"kratos-admin/utils/errx"
+	"kratos-admin/pkg/errx"
 )
 
 type UserCheckOption func(ctx context.Context, user *User) error

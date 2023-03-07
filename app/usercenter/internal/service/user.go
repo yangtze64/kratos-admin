@@ -5,7 +5,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/biz"
-	"kratos-admin/utils/global"
+	"kratos-admin/pkg/global"
 	"time"
 )
 
@@ -82,6 +82,7 @@ func (s *UserCenterService) ExistUserByUid(ctx context.Context, req *v1.ExistUse
 	return
 }
 
+// ListUser 用户列表
 func (s *UserCenterService) ListUser(ctx context.Context, req *v1.UserFilter) (resp *v1.ListUserResp, err error) {
 	user := UserFilterToBizUser(req)
 	data, total, err := s.uc.GetUserList(ctx, user)
@@ -102,6 +103,7 @@ func (s *UserCenterService) ListUser(ctx context.Context, req *v1.UserFilter) (r
 	return
 }
 
+// UserFromBizUser biz.User转换成v1.User
 func UserFromBizUser(u *biz.User) *v1.User {
 	return &v1.User{
 		Uid:         u.Uid,
@@ -119,6 +121,7 @@ func UserFromBizUser(u *biz.User) *v1.User {
 	}
 }
 
+// UserFilterToBizUser v1.UserFilter转换成biz.User
 func UserFilterToBizUser(req *v1.UserFilter) *biz.User {
 	user := biz.User{
 		Mobile:    req.Mobile,

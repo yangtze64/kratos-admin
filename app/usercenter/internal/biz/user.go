@@ -2,9 +2,11 @@ package biz
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
-	"kratos-admin/utils"
-	"kratos-admin/utils/global"
+	"kratos-admin/pkg/errx"
+	"kratos-admin/pkg/global"
+	"kratos-admin/pkg/utils"
 	"time"
 )
 
@@ -42,11 +44,20 @@ type User struct {
 	SortUpdatedAt int32
 }
 
+type JwtToken struct {
+	AccessToken  string
+	AccessExpire int64
+	RefreshAfter int64
+}
+
 type UserRepo interface {
 	Create(ctx context.Context, user *User) (id int, err error)
 	Update(ctx context.Context, uid string, user *User) error
 	List(ctx context.Context, user *User) (list []*User, total int64, err error)
 	FindByUid(ctx context.Context, uid string) (*User, error)
+	FindByUsername(ctx context.Context, username string) (*User, error)
+	FindByMobile(ctx context.Context, mobile string, areaCode int32) (*User, error)
+	FindByEmail(ctx context.Context, email string) (*User, error)
 	ExistUser(ctx context.Context, uid string) (bool, error)
 	ExistUsername(ctx context.Context, username string, excludeUids ...string) (bool, error)
 	ExistMobile(ctx context.Context, mobile string, areaCode int32, excludeUids ...string) (bool, error)
@@ -64,6 +75,69 @@ func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
 		log:  log.NewHelper(log.With(logger, "module", "usecase/user")),
 	}
 }
+
+// CreateUserToken 创建用户Token
+func (u *UserUseCase) CreateUserToken(ctx context.Context, user *User) (*JwtToken, error) {
+
+	return nil, nil
+}
+
+// VerifyUserPassport 校验用户密码
+func (u *UserUseCase) VerifyUserPassport(ctx context.Context, user *User, password string) error {
+	if !utils.VerifyPassword(user.Password, password) {
+		return errx.New(errx.UsernameOrPasswordIncorrect)
+	}
+	return nil
+}
+
+// GetMultiWayUser 获取多种方式得到用户
+func (u *UserUseCase) GetMultiWayUser(ctx context.Context, user *User) (*User, error) {
+	var (
+		err     error
+		info    *User
+		isExist = false
+	)
+	if !isExist {
+		if info, err = u.repo.FindByUsername(ctx, user.Username); err != nil {
+			if !errors.Is(err, errx.New(errx.UserNotFound)) {
+				return nil, err
+			}
+		}
+		if info != nil {
+			isExist = true
+		}
+	}
+	if !isExist && utils.VerifyMobileFormat(user.Username) {
+		if user.AreaCode == 0 {
+			user.AreaCode = global.DefaultMobileAreaCode
+		}
+		if info, err = u.repo.FindByMobile(ctx, user.Username, user.AreaCode); err != nil {
+			if !errors.Is(err, errx.New(errx.UserNotFound)) {
+				return nil, err
+			}
+		}
+		if info != nil {
+			isExist = true
+		}
+	}
+	if !isExist && utils.VerifyEmailFormat(user.Username) {
+		if info, err = u.repo.FindByEmail(ctx, user.Username); err != nil {
+			if !errors.Is(err, errx.New(errx.UserNotFound)) {
+				return nil, err
+			}
+			isExist = false
+		}
+		if info != nil {
+			isExist = true
+		}
+	}
+	if !isExist {
+		return nil, errx.New(errx.UserNotFound)
+	}
+	return info, nil
+}
+
+// CreateUser 创建用户
 func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error) {
 	checkOptions := []UserCheckOption{
 		WithExistUsername(u.repo),
@@ -95,6 +169,8 @@ func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error)
 	user.Id = id
 	return user, nil
 }
+
+// UpdateUserByUid 根据UID更新用户
 func (u *UserUseCase) UpdateUserByUid(ctx context.Context, user *User) error {
 	checkOptions := []UserCheckOption{
 		WithNotExistUser(u.repo),
@@ -121,6 +197,8 @@ func (u *UserUseCase) UpdateUserByUid(ctx context.Context, user *User) error {
 	user.Uid = ""
 	return u.repo.Update(ctx, uid, user)
 }
+
+// DeleteUserByUid 根据UID删除用户
 func (u *UserUseCase) DeleteUserByUid(ctx context.Context, user *User) error {
 	if err := UserCheckChain(ctx, user, WithNotExistUser(u.repo)); err != nil {
 		return err
@@ -132,6 +210,8 @@ func (u *UserUseCase) DeleteUserByUid(ctx context.Context, user *User) error {
 	user.Uid = ""
 	return u.repo.Update(ctx, uid, user)
 }
+
+// GetUserByUid 根据UID获取用户详情
 func (u *UserUseCase) GetUserByUid(ctx context.Context, uid string) (user *User, err error) {
 	user, err = u.repo.FindByUid(ctx, uid)
 	return

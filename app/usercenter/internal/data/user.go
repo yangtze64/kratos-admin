@@ -2,15 +2,14 @@ package data
 
 import (
 	"context"
-	"github.com/go-kratos/kratos/v2/errors"
-	"kratos-admin/utils/global"
+	"kratos-admin/pkg/errx"
+	"kratos-admin/pkg/global"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
 	"kratos-admin/app/usercenter/internal/biz"
 	"kratos-admin/app/usercenter/internal/model/sysuser"
 	"kratos-admin/pkg/expr"
-	"kratos-admin/utils/errx"
 )
 
 type userRepo struct {
@@ -64,6 +63,7 @@ func (u *userRepo) Update(ctx context.Context, uid string, user *biz.User) error
 		Error
 	return err
 }
+
 func (u *userRepo) List(ctx context.Context, user *biz.User) (list []*biz.User, total int64, err error) {
 	userCondOptions := []UserCondOption{
 		WithIdWhere(),
@@ -93,13 +93,13 @@ func (u *userRepo) List(ctx context.Context, user *biz.User) (list []*biz.User, 
 		return
 	}
 	var users []*sysuser.SysUser
-	query := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName+" AS t").Omit(sysuser.Column.DeletedAt.String()).
+	query := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName+" AS t").Omit(sysuser.Column.DeletedAt.String(), sysuser.Column.Password.String()).
 		InnerJoins("INNER JOIN (?) AS s ON t.id = s.id", sub)
 	if query, err = UserCondChain(query, user, WithSortId(), WithSortCreatedAt(), WithSortUpdatedAt()); err != nil {
 		return
 	}
 	if err = query.Find(&users).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if err == gorm.ErrRecordNotFound {
 			return list, total, nil
 		}
 		return
@@ -118,13 +118,57 @@ func (u *userRepo) FindByUid(ctx context.Context, uid string) (*biz.User, error)
 		Where(sysuser.Column.DeletedAt.Eq(), global.ModelNotDeleteAt).
 		Limit(1).First(&user).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if err == gorm.ErrRecordNotFound {
 			return nil, errx.New(errx.UserNotFound)
 		}
 		return nil, err
 	}
 	return UserFromEntity(&user), nil
 }
+func (u *userRepo) FindByUsername(ctx context.Context, username string) (*biz.User, error) {
+	var user sysuser.SysUser
+	err := u.data.db.WithContext(ctx).Omit(sysuser.Column.DeletedAt.String()).
+		Where(sysuser.Column.Username.Eq(), username).
+		Where(sysuser.Column.DeletedAt.Eq(), global.ModelNotDeleteAt).
+		Limit(1).First(&user).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errx.New(errx.UserNotFound)
+		}
+		return nil, err
+	}
+	return UserFromEntity(&user), nil
+}
+func (u *userRepo) FindByMobile(ctx context.Context, mobile string, areaCode int32) (*biz.User, error) {
+	var user sysuser.SysUser
+	err := u.data.db.WithContext(ctx).Omit(sysuser.Column.DeletedAt.String()).
+		Where(sysuser.Column.Mobile.Eq(), mobile).
+		Where(sysuser.Column.AreaCode.Eq(), areaCode).
+		Where(sysuser.Column.DeletedAt.Eq(), global.ModelNotDeleteAt).
+		Limit(1).First(&user).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errx.New(errx.UserNotFound)
+		}
+		return nil, err
+	}
+	return UserFromEntity(&user), nil
+}
+func (u *userRepo) FindByEmail(ctx context.Context, email string) (*biz.User, error) {
+	var user sysuser.SysUser
+	err := u.data.db.WithContext(ctx).Omit(sysuser.Column.DeletedAt.String()).
+		Where(sysuser.Column.Email.Eq(), email).
+		Where(sysuser.Column.DeletedAt.Eq(), global.ModelNotDeleteAt).
+		Limit(1).First(&user).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errx.New(errx.UserNotFound)
+		}
+		return nil, err
+	}
+	return UserFromEntity(&user), nil
+}
+
 func (u *userRepo) ExistUser(ctx context.Context, uid string) (bool, error) {
 	sub := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Select(sysuser.Column.Id.String()).
 		Where(sysuser.Column.Uid.Eq(), uid)
@@ -190,6 +234,7 @@ func UserFromEntity(m *sysuser.SysUser) *biz.User {
 		Id:        m.Id,
 		Uid:       m.Uid,
 		Username:  m.Username,
+		Password:  m.Password,
 		Realname:  m.Realname,
 		Mobile:    m.Mobile,
 		AreaCode:  m.AreaCode,

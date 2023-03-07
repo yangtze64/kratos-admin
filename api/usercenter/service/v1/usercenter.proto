@@ -118,9 +118,9 @@ message Register {
 
 message PasswdLogin {
     message req {
-        string username = 1;// 包含 username、mobile、email
-        int32 area_code = 2; // username 是 mobile时可用
-        string password = 3;
+        string username = 1 [(validate.rules).string = {min_len:5,max_len:255}];// 包含 username、mobile、email
+        int32 area_code = 2 [(validate.rules).int32 = {ignore_empty:true, gte: 1,  lte: 9999}]; // username 是 mobile时可用
+        string password = 3 [(validate.rules).string = {min_len:5,max_len:20}];
     }
     message resp {
         string uid = 1;

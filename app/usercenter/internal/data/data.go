@@ -12,7 +12,7 @@ import (
 
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(NewData, NewDefaultDb, NewDefaultRds,
-	NewUserRepo, NewPassportRepo)
+	NewUserRepo)
 
 type (
 	DefaultDB  *gorm.DB

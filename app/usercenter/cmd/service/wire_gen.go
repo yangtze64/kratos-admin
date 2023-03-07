@@ -31,9 +31,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	}
 	userRepo := data.NewUserRepo(dataData, logger)
 	userUseCase := biz.NewUserUseCase(userRepo, logger)
-	passportRepo := data.NewPassportRepo(dataData, logger)
-	passportUseCase := biz.NewPassportUseCase(passportRepo, logger)
-	userCenterService := service.NewUserCenterService(userUseCase, passportUseCase)
+	userCenterService := service.NewUserCenterService(userUseCase)
 	grpcServer := server.NewGRPCServer(confServer, userCenterService, logger)
 	httpServer := server.NewHTTPServer(confServer, userCenterService, logger)
 	app := newApp(logger, grpcServer, httpServer)
