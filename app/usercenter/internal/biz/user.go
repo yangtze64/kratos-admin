@@ -36,12 +36,16 @@ type User struct {
 
 	Page  int
 	Limit int
+
+	SortId        int32
+	SortCreatedAt int32
+	SortUpdatedAt int32
 }
 
 type UserRepo interface {
 	Create(ctx context.Context, user *User) (id int, err error)
 	Update(ctx context.Context, uid string, user *User) error
-	List(ctx context.Context, user *User) (list []*User, err error)
+	List(ctx context.Context, user *User) (list []*User, total int64, err error)
 	FindByUid(ctx context.Context, uid string) (*User, error)
 	ExistUser(ctx context.Context, uid string) (bool, error)
 	ExistUsername(ctx context.Context, username string, excludeUids ...string) (bool, error)
@@ -136,7 +140,7 @@ func (u *UserUseCase) ExistUserByUid(ctx context.Context, uid string) (exist boo
 	exist, err = u.repo.ExistUser(ctx, uid)
 	return
 }
-func (u *UserUseCase) GetUserList(ctx context.Context, user *User) (list []*User, err error) {
-
-	return nil, nil
+func (u *UserUseCase) GetUserList(ctx context.Context, user *User) (list []*User, total int64, err error) {
+	list, total, err = u.repo.List(ctx, user)
+	return
 }

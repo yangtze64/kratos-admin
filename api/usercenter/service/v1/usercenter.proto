@@ -220,6 +220,14 @@ message UserFilter {
     repeated string operator = 18;
     int64 page = 19 [(validate.rules).int64 = {gte: 1}];
     int64 limit = 20 [(validate.rules).int64 = {gte: 1,  lte: 100}];
+    SortEnum sort_id = 21;
+    SortEnum sort_created_at = 22;
+    SortEnum sort_updated_at = 23;
+    enum SortEnum{
+        NONE = 0;
+        ASC = 1;
+        DESC = 2;
+    }
 }
 message ListUser {
     message resp {

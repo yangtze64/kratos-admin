@@ -109,3 +109,22 @@ func (f String) IfNULL() string {
 		return f
 	}).toString()
 }
+
+func (f String) order(asc bool) string {
+	return f.expr(func(f String) String {
+		if asc {
+			f = "`" + f + "` ASC"
+		} else {
+			f = "`" + f + "` DESC"
+		}
+		return f
+	}).toString()
+}
+
+func (f String) OrderAsc() string {
+	return f.order(true)
+}
+
+func (f String) OrderDesc() string {
+	return f.order(false)
+}

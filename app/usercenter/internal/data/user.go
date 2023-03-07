@@ -64,7 +64,7 @@ func (u *userRepo) Update(ctx context.Context, uid string, user *biz.User) error
 		Error
 	return err
 }
-func (u *userRepo) List(ctx context.Context, user *biz.User) (list []*biz.User, err error) {
+func (u *userRepo) List(ctx context.Context, user *biz.User) (list []*biz.User, total int64, err error) {
 	userCondOptions := []UserCondOption{
 		WithIdWhere(),
 		WithUidWhere(),
@@ -79,25 +79,32 @@ func (u *userRepo) List(ctx context.Context, user *biz.User) (list []*biz.User, 
 		WithOperatorWhere(),
 		WithCreatedAtWhere(),
 		WithUpdatedAtWhere(),
-		WithPager(),
 	}
-	query := u.data.db.WithContext(ctx).Omit(sysuser.Column.DeletedAt.String())
+	tx := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName)
+	if tx, err = UserCondChain(tx, user, userCondOptions...); err != nil {
+		return
+	}
+	if err = tx.Count(&total).Error; err != nil {
+		return
+	}
+	userCondOptions = append(userCondOptions, WithPager(), WithSortId(), WithSortCreatedAt(), WithSortUpdatedAt())
+	query := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Omit(sysuser.Column.DeletedAt.String())
 	if query, err = UserCondChain(query, user, userCondOptions...); err != nil {
-		return nil, err
+		return
 	}
 	var users []*sysuser.SysUser
 	if err = query.Find(&users).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return list, nil
+			return list, total, nil
 		}
-		return nil, err
+		return
 	}
 	if len(users) > 0 {
 		for _, v := range users {
 			list = append(list, UserFromEntity(v))
 		}
 	}
-	return nil, nil
+	return
 }
 func (u *userRepo) FindByUid(ctx context.Context, uid string) (*biz.User, error) {
 	var user sysuser.SysUser

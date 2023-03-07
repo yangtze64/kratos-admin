@@ -157,14 +157,14 @@ func WithCreatedAtWhere() UserCondOption {
 				if err != nil {
 					return tx, err
 				}
-				tx.Where(sysuser.Column.CreatedAt.Gte(),timeS.Unix())
+				tx.Where(sysuser.Column.CreatedAt.Gte(), timeS.Unix())
 			}
 			if user.CreatedDateEnd != "" {
 				timeE, err := time.ParseInLocation(global.TimeFormat, user.CreatedDateEnd, time.Local)
 				if err != nil {
 					return tx, err
 				}
-				tx.Where(sysuser.Column.CreatedAt.Lte(),timeE.Unix())
+				tx.Where(sysuser.Column.CreatedAt.Lte(), timeE.Unix())
 			}
 		}
 		return
@@ -181,14 +181,14 @@ func WithUpdatedAtWhere() UserCondOption {
 				if err != nil {
 					return tx, err
 				}
-				tx.Where(sysuser.Column.UpdatedAt.Gte(),timeS.Unix())
+				tx.Where(sysuser.Column.UpdatedAt.Gte(), timeS.Unix())
 			}
 			if user.UpdatedDateEnd != "" {
 				timeE, err := time.ParseInLocation(global.TimeFormat, user.UpdatedDateEnd, time.Local)
 				if err != nil {
 					return tx, err
 				}
-				tx.Where(sysuser.Column.UpdatedAt.Lte(),timeE.Unix())
+				tx.Where(sysuser.Column.UpdatedAt.Lte(), timeE.Unix())
 			}
 		}
 		return
@@ -206,22 +206,56 @@ func WithLimit() UserCondOption {
 func WithPager() UserCondOption {
 	return func(db *gorm.DB, user *biz.User) (tx *gorm.DB, err error) {
 		tx = db
-		if user.Limit > 0 && user.Page > 0{
+		if user.Limit > 0 && user.Page > 0 {
 			tx.Limit(user.Limit).Offset((user.Page - 1) * user.Limit)
 		}
 		return
 	}
 }
-func WithOrder(field string, asc bool) UserCondOption {
+func WithSort(field string, asc bool) UserCondOption {
 	return func(db *gorm.DB, user *biz.User) (tx *gorm.DB, err error) {
 		tx = db
 		if asc {
-			tx.Order(field+" ASC")
-		}else{
-			tx.Order(field+" DESC")
+			tx.Order(field + " ASC")
+		} else {
+			tx.Order(field + " DESC")
 		}
 		return
 	}
 }
-
-
+func WithSortId() UserCondOption {
+	return func(db *gorm.DB, user *biz.User) (tx *gorm.DB, err error) {
+		tx = db
+		switch user.SortId {
+		case 1:
+			tx.Order(sysuser.Column.Id.OrderAsc())
+		case 2:
+			tx.Order(sysuser.Column.Id.OrderDesc())
+		}
+		return
+	}
+}
+func WithSortCreatedAt() UserCondOption {
+	return func(db *gorm.DB, user *biz.User) (tx *gorm.DB, err error) {
+		tx = db
+		switch user.SortCreatedAt {
+		case 1:
+			tx.Order(sysuser.Column.CreatedAt.OrderAsc())
+		case 2:
+			tx.Order(sysuser.Column.CreatedAt.OrderDesc())
+		}
+		return
+	}
+}
+func WithSortUpdatedAt() UserCondOption {
+	return func(db *gorm.DB, user *biz.User) (tx *gorm.DB, err error) {
+		tx = db
+		switch user.SortUpdatedAt {
+		case 1:
+			tx.Order(sysuser.Column.UpdatedAt.OrderAsc())
+		case 2:
+			tx.Order(sysuser.Column.UpdatedAt.OrderDesc())
+		}
+		return
+	}
+}
