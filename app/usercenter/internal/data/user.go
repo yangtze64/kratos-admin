@@ -88,11 +88,16 @@ func (u *userRepo) List(ctx context.Context, user *biz.User) (list []*biz.User, 
 		return
 	}
 	userCondOptions = append(userCondOptions, WithPager(), WithSortId(), WithSortCreatedAt(), WithSortUpdatedAt())
-	query := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Omit(sysuser.Column.DeletedAt.String())
-	if query, err = UserCondChain(query, user, userCondOptions...); err != nil {
+	sub := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName).Select(sysuser.Column.Id.String())
+	if sub, err = UserCondChain(sub, user, userCondOptions...); err != nil {
 		return
 	}
 	var users []*sysuser.SysUser
+	query := u.data.db.WithContext(ctx).Table(sysuser.TableSysUserName+" AS t").Omit(sysuser.Column.DeletedAt.String()).
+		InnerJoins("INNER JOIN (?) AS s ON t.id = s.id", sub)
+	if query, err = UserCondChain(query, user, WithSortId(), WithSortCreatedAt(), WithSortUpdatedAt()); err != nil {
+		return
+	}
 	if err = query.Find(&users).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return list, total, nil

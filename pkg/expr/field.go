@@ -56,14 +56,14 @@ func (f String) Lte() string {
 func (f String) In() string {
 	return f.expr(func(f String) String {
 		//str := String(strings.TrimRight(strings.Repeat(string(Symbol+","), n), ","))
-		f = "`" + f + "` IN ?"
+		f = "`" + f + "` IN (?)"
 		return f
 	}).toString()
 }
 func (f String) NotIn() string {
 	return f.expr(func(f String) String {
 		//str := String(strings.TrimRight(strings.Repeat(string(Symbol+","), n), ","))
-		f = "`" + f + "` NOT IN ?"
+		f = "`" + f + "` NOT IN (?)"
 		return f
 	}).toString()
 }

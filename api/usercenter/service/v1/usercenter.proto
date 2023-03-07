@@ -79,19 +79,6 @@ service UserCenter {
             get: "/usercenter/v1/users/exist/{uid}"
         };
     }
-    // 获取用户UID
-    rpc FindUserIds (UserFilter) returns (FindUserIds.resp) {
-        option (google.api.http) = {
-            get: "/usercenter/v1/users/uids"
-        };
-    }
-    // 批处理用户
-    rpc BatchUser (BatchUser.req) returns (google.protobuf.Empty) {
-        option (google.api.http) = {
-            post: "/usercenter/v1/users/batch"
-            body: "*"
-        };
-    }
 }
 
 message User {
@@ -246,23 +233,5 @@ message ExistUserByUid {
     }
     message resp {
         bool is_exist = 1;
-    }
-}
-message FindUserIds{
-    message resp {
-        repeated string uid = 1;
-    }
-}
-
-message BatchUser {
-    enum methodEnum{
-        SAVE = 0;
-        INSERT = 1;
-        UPDATE = 2;
-        DELETE = 3;
-    }
-    message req {
-        methodEnum method = 1;
-        repeated User data = 2;
     }
 }
