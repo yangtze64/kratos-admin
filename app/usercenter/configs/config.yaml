@@ -21,3 +21,9 @@ data:
       addr: 127.0.0.1:6379
       read_timeout: 0.2s
       write_timeout: 0.2s
+
+jwtAuth:
+  secret: 366CD62F-EA73-48A7-9751-7F1EE90BF3BE
+  expire: 7200s
+  issuer: hulianpai.com
+  id: 1

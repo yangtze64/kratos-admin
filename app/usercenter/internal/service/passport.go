@@ -37,18 +37,22 @@ func (s *UserCenterService) Register(ctx context.Context, req *v1.RegisterReq) (
 
 // PasswdLogin 用户密码登录
 func (s *UserCenterService) PasswdLogin(ctx context.Context, req *v1.PasswdLoginReq) (resp *v1.PasswdLoginResp, err error) {
-	u := &biz.User{
+	ud := &biz.User{
 		Username: req.Username,
 		AreaCode: req.AreaCode,
 		Password: req.Password,
 	}
-	user, err := s.uc.GetMultiWayUser(ctx, u)
+	user, token, err := s.uc.UserPasswdLogin(ctx, ud)
 	if err != nil {
 		return
 	}
-	if err = s.uc.VerifyUserPassport(ctx, user, u.Password); err != nil {
-		return
+	resp = &v1.PasswdLoginResp{
+		Uid:          user.Uid,
+		Username:     user.Username,
+		Realname:     user.Realname,
+		AccessToken:  token.AccessToken,
+		AccessExpire: token.AccessExpire,
+		RefreshAfter: token.RefreshAfter,
 	}
-	_, err = s.uc.CreateUserToken(ctx, user)
 	return
 }

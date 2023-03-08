@@ -2,10 +2,13 @@ package biz
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"kratos-admin/app/usercenter/internal/conf"
 	"kratos-admin/pkg/errx"
 	"kratos-admin/pkg/global"
+	"kratos-admin/pkg/jwt"
 	"kratos-admin/pkg/utils"
 	"time"
 )
@@ -62,24 +65,64 @@ type UserRepo interface {
 	ExistUsername(ctx context.Context, username string, excludeUids ...string) (bool, error)
 	ExistMobile(ctx context.Context, mobile string, areaCode int32, excludeUids ...string) (bool, error)
 	ExistEmail(ctx context.Context, email string, excludeUids ...string) (bool, error)
+
+	CacheAccessToken(ctx context.Context, token string, expire int64) error
 }
 
 type UserUseCase struct {
-	repo UserRepo
-	log  *log.Helper
+	repo    UserRepo
+	jwtAuth *conf.JwtAuth
+	log     *log.Helper
 }
 
-func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
+func NewUserUseCase(repo UserRepo, jwtAuth *conf.JwtAuth, logger log.Logger) *UserUseCase {
+	fmt.Printf("%+v\n", jwtAuth)
 	return &UserUseCase{
-		repo: repo,
-		log:  log.NewHelper(log.With(logger, "module", "usecase/user")),
+		repo:    repo,
+		jwtAuth: jwtAuth,
+		log:     log.NewHelper(log.With(logger, "module", "usecase/user")),
 	}
+}
+
+func (u *UserUseCase) UserPasswdLogin(ctx context.Context, ud *User) (user *User, token *JwtToken, err error) {
+	user, err = u.GetMultiWayUser(ctx, ud)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err = u.VerifyUserPassport(ctx, user, ud.Password); err != nil {
+		return nil, nil, err
+	}
+	token, err = u.CreateUserToken(ctx, user)
+	if err != nil {
+		return nil, nil, err
+	}
+	return
 }
 
 // CreateUserToken 创建用户Token
 func (u *UserUseCase) CreateUserToken(ctx context.Context, user *User) (*JwtToken, error) {
-
-	return nil, nil
+	now := time.Now().Unix()
+	uid := user.Uid
+	expire := u.jwtAuth.Expire.Seconds
+	payloads := map[string]interface{}{
+		"iss":              u.jwtAuth.Issuer,
+		"jti":              u.jwtAuth.Id,
+		"sub":              uid,
+		global.LoginUidKey: uid,
+	}
+	token, err := jwt.GenToken(now, u.jwtAuth.Secret, payloads, expire)
+	if err != nil {
+		return nil, err
+	}
+	// token缓存
+	if err = u.repo.CacheAccessToken(ctx, token, expire); err != nil {
+		return nil, err
+	}
+	return &JwtToken{
+		AccessToken:  token,
+		AccessExpire: expire,
+		RefreshAfter: expire / 2,
+	}, nil
 }
 
 // VerifyUserPassport 校验用户密码

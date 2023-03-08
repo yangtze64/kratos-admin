@@ -6,6 +6,7 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/go-kratos/kratos/v2 v2.5.4
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/spaolacci/murmur3 v1.1.0

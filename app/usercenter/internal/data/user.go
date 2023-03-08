@@ -4,6 +4,8 @@ import (
 	"context"
 	"kratos-admin/pkg/errx"
 	"kratos-admin/pkg/global"
+	"kratos-admin/pkg/hash"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
@@ -227,6 +229,11 @@ func (u *userRepo) exist(ctx context.Context, sub *gorm.DB) (bool, error) {
 		return false, err
 	}
 	return exist, nil
+}
+
+func (u *userRepo) CacheAccessToken(ctx context.Context, token string, expire int64) error {
+	err := u.data.rds.Set(ctx, global.CacheUserLoginToken+string(hash.Md5([]byte(token))), token, time.Duration(expire)).Err()
+	return err
 }
 
 func UserFromEntity(m *sysuser.SysUser) *biz.User {
