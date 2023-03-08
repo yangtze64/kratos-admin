@@ -84,6 +84,21 @@ func NewUserUseCase(repo UserRepo, jwtAuth *conf.JwtAuth, logger log.Logger) *Us
 	}
 }
 
+func (u *UserUseCase) UserMobileSimulationLogin(ctx context.Context, ud *User) (user *User, token *JwtToken, err error) {
+	if ud.AreaCode == 0 {
+		ud.AreaCode = global.DefaultMobileAreaCode
+	}
+	user, err = u.repo.FindByMobile(ctx, ud.Mobile, ud.AreaCode)
+	if err != nil {
+		return nil, nil, err
+	}
+	token, err = u.CreateUserToken(ctx, user)
+	if err != nil {
+		return nil, nil, err
+	}
+	return
+}
+
 func (u *UserUseCase) UserPasswdLogin(ctx context.Context, ud *User) (user *User, token *JwtToken, err error) {
 	user, err = u.GetMultiWayUser(ctx, ud)
 	if err != nil {

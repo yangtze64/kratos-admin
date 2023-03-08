@@ -36,7 +36,7 @@ func (s *UserCenterService) Register(ctx context.Context, req *v1.RegisterReq) (
 }
 
 // PasswdLogin 用户密码登录
-func (s *UserCenterService) PasswdLogin(ctx context.Context, req *v1.PasswdLoginReq) (resp *v1.PasswdLoginResp, err error) {
+func (s *UserCenterService) PasswdLogin(ctx context.Context, req *v1.PasswdLoginReq) (resp *v1.UserLoginResp, err error) {
 	ud := &biz.User{
 		Username: req.Username,
 		AreaCode: req.AreaCode,
@@ -46,7 +46,28 @@ func (s *UserCenterService) PasswdLogin(ctx context.Context, req *v1.PasswdLogin
 	if err != nil {
 		return
 	}
-	resp = &v1.PasswdLoginResp{
+	resp = &v1.UserLoginResp{
+		Uid:          user.Uid,
+		Username:     user.Username,
+		Realname:     user.Realname,
+		AccessToken:  token.AccessToken,
+		AccessExpire: token.AccessExpire,
+		RefreshAfter: token.RefreshAfter,
+	}
+	return
+}
+
+// SimulationLogin 模拟登录
+func (s *UserCenterService) SimulationLogin(ctx context.Context, req *v1.SimulationLoginReq) (resp *v1.UserLoginResp, err error) {
+	ud := &biz.User{
+		Mobile:   req.Mobile,
+		AreaCode: req.AreaCode,
+	}
+	user, token, err := s.uc.UserMobileSimulationLogin(ctx, ud)
+	if err != nil {
+		return
+	}
+	resp = &v1.UserLoginResp{
 		Uid:          user.Uid,
 		Username:     user.Username,
 		Realname:     user.Realname,

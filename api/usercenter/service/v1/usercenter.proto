@@ -18,14 +18,14 @@ service UserCenter {
         };
     }
     // 密码登陆
-    rpc PasswdLogin (PasswdLogin.req) returns (PasswdLogin.resp) {
+    rpc PasswdLogin (PasswdLogin.req) returns (UserLoginResp) {
         option (google.api.http) = {
             post: "/passport/v1/login"
             body: "*"
         };
     }
     // 模拟登陆
-    rpc SimulationLogin (SimulationLogin.req) returns (SimulationLogin.resp) {
+    rpc SimulationLogin (SimulationLogin.req) returns (UserLoginResp) {
         option (google.api.http) = {
             post: "/passport/v1/simulation/login"
             body: "*"
@@ -116,19 +116,20 @@ message Register {
     }
 }
 
+
+message UserLoginResp {
+    string uid = 1;
+    string username = 2;
+    string realname = 3;
+    string AccessToken = 4;
+    int64 AccessExpire = 5;
+    int64 RefreshAfter = 6;
+}
 message PasswdLogin {
     message req {
         string username = 1 [(validate.rules).string = {min_len:5,max_len:255}];// 包含 username、mobile、email
         int32 area_code = 2 [(validate.rules).int32 = {ignore_empty:true, gte: 1,  lte: 9999}]; // username 是 mobile时可用
         string password = 3 [(validate.rules).string = {min_len:5,max_len:20}];
-    }
-    message resp {
-        string uid = 1;
-        string username = 2;
-        string realname = 3;
-        string AccessToken = 4;
-        int64 AccessExpire = 5;
-        int64 RefreshAfter = 6;
     }
 }
 
@@ -136,14 +137,6 @@ message SimulationLogin {
     message req {
         string mobile = 1;
         int32 area_code = 2;
-    }
-    message resp {
-        string uid = 1;
-        string username = 2;
-        string realname = 3;
-        string AccessToken = 4;
-        int64 AccessExpire = 5;
-        int64 RefreshAfter = 6;
     }
 }
 
