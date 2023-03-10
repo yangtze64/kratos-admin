@@ -235,6 +235,10 @@ func (u *userRepo) CacheAccessToken(ctx context.Context, token string, expire in
 	err := u.data.rds.Set(ctx, global.CacheUserLoginToken+string(hash.Md5([]byte(token))), token, time.Duration(expire)).Err()
 	return err
 }
+func (u *userRepo) DelCacheAccessToken(ctx context.Context, token string) error {
+	err := u.data.rds.Del(ctx, global.CacheUserLoginToken+string(hash.Md5([]byte(token)))).Err()
+	return err
+}
 
 func UserFromEntity(m *sysuser.SysUser) *biz.User {
 	return &biz.User{

@@ -4,6 +4,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/conf"
+	"kratos-admin/app/usercenter/internal/server/mdw"
 	"kratos-admin/app/usercenter/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -12,11 +13,12 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, userCenterService *service.UserCenterService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, jwtconf *conf.JwtAuth, userCenterService *service.UserCenterService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
 			validate.Validator(),
+			mdw.CheckLogin(jwtconf),
 		),
 	}
 	if c.Http.Network != "" {

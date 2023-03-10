@@ -17,18 +17,22 @@ const (
 	UserEmailExist              ErrxReason = "USER_EMAIL_EXIST"
 	UserNotFound                ErrxReason = "USER_NOT_FOUND"
 	UsernameOrPasswordIncorrect ErrxReason = "USERNAME_OR_PASSWORD_INCORRECT"
+	UnauthorizedInfoMissing     ErrxReason = "UNAUTHORIZED_INFO_MISSING"
+	UnauthorizedTokenInvalid    ErrxReason = "UNAUTHORIZED_TOKEN_INVALID"
 )
 
 var reasonMessage = map[ErrxReason]string{
-	UnknownError:                "unknown error",
-	Success:                     "success",
-	ServerError:                 "server error",
-	TowPasswordDiff:             "the two passwords are different",
-	UserNameExist:               "the username already exists",
-	UserMobileExist:             "the user mobile already exists",
-	UserEmailExist:              "the user email already exists",
-	UserNotFound:                "the user was not found",
-	UsernameOrPasswordIncorrect: "the user name or password is incorrect",
+	UnknownError:                "Unknown error",
+	Success:                     "Success",
+	ServerError:                 "Server error",
+	TowPasswordDiff:             "The two passwords are different",
+	UserNameExist:               "The username already exists",
+	UserMobileExist:             "The user mobile already exists",
+	UserEmailExist:              "The user email already exists",
+	UserNotFound:                "The user was not found",
+	UsernameOrPasswordIncorrect: "The user name or password is incorrect",
+	UnauthorizedInfoMissing:     "The authorization information not found",
+	UnauthorizedTokenInvalid:    "The authorization token is invalid",
 }
 
 var reasonCode = map[ErrxReason]int{
@@ -41,6 +45,8 @@ var reasonCode = map[ErrxReason]int{
 	UserEmailExist:              http.StatusConflict,
 	UserNotFound:                http.StatusNotFound,
 	UsernameOrPasswordIncorrect: http.StatusUnauthorized,
+	UnauthorizedInfoMissing:     http.StatusUnauthorized,
+	UnauthorizedTokenInvalid:    http.StatusUnauthorized,
 }
 
 func New(reason ErrxReason) *errors.Error {

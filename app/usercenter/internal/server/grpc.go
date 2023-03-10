@@ -4,6 +4,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/conf"
+	"kratos-admin/app/usercenter/internal/server/mdw"
 	"kratos-admin/app/usercenter/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -12,11 +13,12 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, userCenterService *service.UserCenterService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, jwtconf *conf.JwtAuth, userCenterService *service.UserCenterService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
 			validate.Validator(),
+			mdw.CheckLogin(jwtconf),
 		),
 	}
 	if c.Grpc.Network != "" {

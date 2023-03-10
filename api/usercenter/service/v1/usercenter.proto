@@ -135,8 +135,8 @@ message PasswdLogin {
 
 message SimulationLogin {
     message req {
-        string mobile = 1;
-        int32 area_code = 2;
+        string mobile = 1 [(validate.rules).string = {pattern:"^[0-9]{6,20}$"}];
+        int32 area_code = 2 [(validate.rules).int32 = {gte: 1,  lte: 9999}];
     }
 }
 

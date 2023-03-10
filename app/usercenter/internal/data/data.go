@@ -14,6 +14,8 @@ import (
 var ProviderSet = wire.NewSet(NewData, NewDefaultDb, NewDefaultRds,
 	NewUserRepo)
 
+var RdsCli *redis.Client
+
 type (
 	DefaultDB  *gorm.DB
 	DefaultRDS *redis.Client
@@ -41,13 +43,14 @@ func NewDefaultDb(c *conf.Data) (DefaultDB, error) {
 //}
 
 func NewDefaultRds(c *conf.Data) DefaultRDS {
-	rds := util.NewRedis(c.Redis.Default)
+	rds := util.NewRedis(c.Redis)
 	return DefaultRDS(rds)
 }
 
 // NewData .
 func NewData(c *conf.Data, db DefaultDB, defRds DefaultRDS, logger log.Logger) (*Data, func(), error) {
 	rds := (*redis.Client)(defRds)
+	RdsCli = rds
 	cleanup := func() {
 		_ = rds.Close()
 		log.NewHelper(logger).Info("closing the data resources")

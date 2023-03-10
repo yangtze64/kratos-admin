@@ -32,7 +32,11 @@ message Data {
     int32 max_conn = 3;
     int32 max_idle = 4;
   }
-  message RedisConn {
+  message Database {
+    Mysql default = 1;
+    Mysql user = 2;
+  }
+  message Redis {
     string network = 1;
     string addr = 2;
     int32 db = 3;
@@ -42,13 +46,6 @@ message Data {
     int32 max_retry = 7;
     google.protobuf.Duration read_timeout = 8;
     google.protobuf.Duration write_timeout = 9;
-  }
-  message Database {
-    Mysql default = 1;
-    Mysql user = 2;
-  }
-  message Redis {
-    RedisConn default = 1;
   }
   Database database = 1;
   Redis redis = 2;

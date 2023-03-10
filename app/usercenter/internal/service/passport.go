@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"google.golang.org/protobuf/types/known/emptypb"
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/biz"
 	"kratos-admin/pkg/errx"
@@ -75,5 +76,11 @@ func (s *UserCenterService) SimulationLogin(ctx context.Context, req *v1.Simulat
 		AccessExpire: token.AccessExpire,
 		RefreshAfter: token.RefreshAfter,
 	}
+	return
+}
+
+// Logout 主动登出
+func (s *UserCenterService) Logout(ctx context.Context, req *emptypb.Empty) (resp *emptypb.Empty, err error) {
+	err = s.uc.UserActiveLogout(ctx)
 	return
 }

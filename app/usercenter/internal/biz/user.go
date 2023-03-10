@@ -67,6 +67,7 @@ type UserRepo interface {
 	ExistEmail(ctx context.Context, email string, excludeUids ...string) (bool, error)
 
 	CacheAccessToken(ctx context.Context, token string, expire int64) error
+	DelCacheAccessToken(ctx context.Context, token string) error
 }
 
 type UserUseCase struct {
@@ -114,16 +115,22 @@ func (u *UserUseCase) UserPasswdLogin(ctx context.Context, ud *User) (user *User
 	return
 }
 
+func (u *UserUseCase) UserActiveLogout(ctx context.Context) error {
+	token := ctx.Value(global.LoginCurrTokenKey).(string)
+	err := u.repo.DelCacheAccessToken(ctx, token)
+	return err
+}
+
 // CreateUserToken 创建用户Token
 func (u *UserUseCase) CreateUserToken(ctx context.Context, user *User) (*JwtToken, error) {
 	now := time.Now().Unix()
-	uid := user.Uid
 	expire := u.jwtAuth.Expire.Seconds
 	payloads := map[string]interface{}{
-		"iss":              u.jwtAuth.Issuer,
-		"jti":              u.jwtAuth.Id,
-		"sub":              uid,
-		global.LoginUidKey: uid,
+		"iss":                   u.jwtAuth.Issuer,
+		"jti":                   u.jwtAuth.Id,
+		"sub":                   user.Uid,
+		global.LoginUidKey:      user.Uid,
+		global.LoginUsernameKey: user.Username,
 	}
 	token, err := jwt.GenToken(now, u.jwtAuth.Secret, payloads, expire)
 	if err != nil {

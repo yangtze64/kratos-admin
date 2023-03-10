@@ -32,8 +32,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, jwtAuth *conf.JwtAuth
 	userRepo := data.NewUserRepo(dataData, logger)
 	userUseCase := biz.NewUserUseCase(userRepo, jwtAuth, logger)
 	userCenterService := service.NewUserCenterService(userUseCase)
-	grpcServer := server.NewGRPCServer(confServer, userCenterService, logger)
-	httpServer := server.NewHTTPServer(confServer, userCenterService, logger)
+	grpcServer := server.NewGRPCServer(confServer, jwtAuth, userCenterService, logger)
+	httpServer := server.NewHTTPServer(confServer, jwtAuth, userCenterService, logger)
 	app := newApp(logger, grpcServer, httpServer)
 	return app, func() {
 		cleanup()

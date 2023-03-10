@@ -5,7 +5,7 @@ import (
 	"kratos-admin/app/usercenter/internal/conf"
 )
 
-func NewRedis(c *conf.Data_RedisConn) *redis.Client {
+func NewRedis(c *conf.Data_Redis) *redis.Client {
 	options := &redis.Options{
 		Addr: c.Addr,
 		DB:   int(c.Db),
