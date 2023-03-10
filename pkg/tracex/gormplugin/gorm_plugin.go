@@ -75,25 +75,27 @@ func before(db *gorm.DB, op string) {
 		db.Logger.Error(context.TODO(), "db.Statement and db.Statement.Context is nil")
 		return
 	}
-	//tracer := otel.Tracer(spanKey)
+	tracer := otel.Tracer(spanKey)
 	//ctx, span := tracer.Start(db.Statement.Context, op, trace.WithSpanKind(trace.SpanKindServer))
+	_, span := tracer.Start(db.Statement.Context, op)
 	//db.WithContext(ctx).InstanceSet(spanKey, span)
+	db.InstanceSet(spanKey, span)
 }
 func after(db *gorm.DB) {
 	if db.Statement == nil || db.Statement.Context == nil {
 		db.Logger.Error(context.TODO(), "db.Statement and db.Statement.Context is nil")
 		return
 	}
-	//_span, ok := db.InstanceGet(spanKey)
-	//if !ok || _span == nil {
-	//	return
-	//}
-	//span, ok := _span.(trace.Span)
-	//if !ok || span == nil {
-	//	return
-	//}
-	tracer := otel.Tracer(spanKey)
-	_, span := tracer.Start(db.Statement.Context, _ActionCreate, trace.WithSpanKind(trace.SpanKindServer))
+	_span, ok := db.InstanceGet(spanKey)
+	if !ok || _span == nil {
+		return
+	}
+	span, ok := _span.(trace.Span)
+	if !ok || span == nil {
+		return
+	}
+	//tracer := otel.Tracer(spanKey)
+	//_, span := tracer.Start(db.Statement.Context, _ActionCreate, trace.WithSpanKind(trace.SpanKindServer))
 	defer span.End()
 	attrs := []attribute.KeyValue{
 		attribute.String("table", db.Statement.Table),
