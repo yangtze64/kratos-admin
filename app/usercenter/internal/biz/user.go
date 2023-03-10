@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"go.opentelemetry.io/otel"
 	"kratos-admin/app/usercenter/internal/conf"
 	"kratos-admin/pkg/errx"
 	"kratos-admin/pkg/global"
@@ -81,7 +82,7 @@ func NewUserUseCase(repo UserRepo, jwtAuth *conf.JwtAuth, logger log.Logger) *Us
 	return &UserUseCase{
 		repo:    repo,
 		jwtAuth: jwtAuth,
-		log:     log.NewHelper(log.With(logger, "module", "usecase/user")),
+		log:     log.NewHelper(log.With(logger, "module", "usercenter/usercase")),
 	}
 }
 
@@ -101,6 +102,10 @@ func (u *UserUseCase) UserMobileSimulationLogin(ctx context.Context, ud *User) (
 }
 
 func (u *UserUseCase) UserPasswdLogin(ctx context.Context, ud *User) (user *User, token *JwtToken, err error) {
+
+	t := otel.Tracer("UserPasswdLogin")
+	ctx, s := t.Start(ctx, "User")
+	defer s.End()
 	user, err = u.GetMultiWayUser(ctx, ud)
 	if err != nil {
 		return nil, nil, err

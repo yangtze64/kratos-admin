@@ -2,6 +2,9 @@ package main
 
 import (
 	"flag"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"go.opentelemetry.io/otel/attribute"
+	"kratos-admin/pkg/tracex"
 	"os"
 
 	"kratos-admin/app/usercenter/internal/conf"
@@ -10,9 +13,9 @@ import (
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
@@ -74,6 +77,12 @@ func main() {
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
+
+	if err := tracex.SetTracerProvider(bc.Trace.Endpoint, func() attribute.KeyValue {
+		return semconv.ServiceNameKey.String(Name)
+	}); err != nil {
+		log.Error(err)
+	}
 
 	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.JwtAuth, logger)
 	if err != nil {

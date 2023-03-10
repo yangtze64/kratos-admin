@@ -1,6 +1,8 @@
 package server
 
 import (
+	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/conf"
@@ -17,6 +19,8 @@ func NewGRPCServer(c *conf.Server, jwtconf *conf.JwtAuth, userCenterService *ser
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+			tracing.Server(),
+			logging.Server(logger),
 			validate.Validator(),
 			mdw.CheckLogin(jwtconf),
 		),

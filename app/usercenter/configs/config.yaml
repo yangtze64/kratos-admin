@@ -27,3 +27,6 @@ jwtAuth:
   expire: 7200s
   issuer: hulianpai.com
   id: 1
+
+trace:
+  endpoint: http://127.0.0.1:14268/api/traces

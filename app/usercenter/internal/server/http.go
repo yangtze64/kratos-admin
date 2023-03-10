@@ -1,6 +1,8 @@
 package server
 
 import (
+	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/conf"
@@ -13,12 +15,14 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, jwtconf *conf.JwtAuth, userCenterService *service.UserCenterService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, jwtConf *conf.JwtAuth, userCenterService *service.UserCenterService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			tracing.Server(),
+			logging.Server(logger),
 			validate.Validator(),
-			mdw.CheckLogin(jwtconf),
+			mdw.CheckLogin(jwtConf),
 		),
 	}
 	if c.Http.Network != "" {
