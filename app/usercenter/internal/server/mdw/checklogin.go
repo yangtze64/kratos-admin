@@ -2,7 +2,6 @@ package mdw
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
@@ -43,8 +42,6 @@ func setUserToCtx() middleware.Middleware {
 			if uid == "" {
 				return nil, errx.New(errx.UnauthorizedInfoMissing)
 			}
-			fmt.Println(usermame)
-			fmt.Println(uid)
 			ctx = context.WithValue(ctx, global.LoginUidKey, uid)
 			ctx = context.WithValue(ctx, global.LoginUsernameKey, usermame)
 			return handler(ctx, req)
@@ -58,7 +55,7 @@ func checkCacheToken() middleware.Middleware {
 			if header, ok := transport.FromServerContext(ctx); ok {
 				auths := strings.SplitN(header.RequestHeader().Get("Authorization"), " ", 2)
 				token := auths[1]
-				if tk := data.RdsCli.Get(ctx, global.CacheUserLoginToken+string(hash.Md5([]byte(token)))).String(); tk == "" {
+				if tk := data.RdsCli.Get(ctx, global.CacheUserLoginToken+hash.Md5Hex([]byte(token))).Val(); tk == "" {
 					return nil, errx.New(errx.UnauthorizedTokenInvalid)
 				}
 				ctx = context.WithValue(ctx, global.LoginCurrTokenKey, token)

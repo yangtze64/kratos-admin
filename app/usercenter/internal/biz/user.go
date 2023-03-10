@@ -142,8 +142,8 @@ func (u *UserUseCase) CreateUserToken(ctx context.Context, user *User) (*JwtToke
 	}
 	return &JwtToken{
 		AccessToken:  token,
-		AccessExpire: expire,
-		RefreshAfter: expire / 2,
+		AccessExpire: now + expire,
+		RefreshAfter: now + expire/2,
 	}, nil
 }
 

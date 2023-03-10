@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"github.com/go-redis/redis/v8"
 	"kratos-admin/app/usercenter/internal/conf"
 )
@@ -29,5 +30,6 @@ func NewRedis(c *conf.Data_Redis) *redis.Client {
 		options.ReadTimeout = c.WriteTimeout.AsDuration()
 	}
 	rds := redis.NewClient(options)
+	fmt.Println(rds)
 	return rds
 }
