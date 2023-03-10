@@ -18,9 +18,9 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name = "admin.usercenter.service"
+	Name = ""
 	// Version is the version of the compiled software.
-	Version string = "v1.0"
+	Version string = ""
 	// flagconf is the config flag.
 	flagconf string
 
@@ -47,15 +47,6 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
@@ -71,6 +62,18 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
+	Name = bc.Name
+	Version = bc.Version
+
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
 
 	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.JwtAuth, logger)
 	if err != nil {
