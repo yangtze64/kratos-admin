@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package authorization.service.v1;
+
+//import "google/protobuf/empty.proto";
+import "validate/validate.proto";
+
+option go_package = "api/authorization/service/v1;v1";
+
+
+service Authorization {
+  // 创建角色
+  rpc CreateRole (CreateRole.req) returns (CreateRole.resp) {}
+  // 修改角色
+  rpc UpdateRole (UpdateRole.req) returns (UpdateRole.resp) {}
+  // 删除角色
+  rpc DeleteRole (DeleteRole.req) returns (DeleteRole.resp) {}
+  // 角色列表
+  rpc ListRole (ListRole.req) returns (ListRole.resp) {}
+  // 获取某角色
+  rpc FindRoleById (FindRoleById.req) returns (FindRoleById.resp) {}
+}
+
+
+message CreateRole {
+  message req {
+    string name = 1 [(validate.rules).string = {max_len:60}];
+    string description = 2 [(validate.rules).string = {ignore_empty:true,max_len:255}];
+    bool is_enable = 3;
+    string operator = 8;
+    int64 created_at = 9;
+    int64 updated_at = 10;
+  }
+  message resp {
+    int64 id = 1;
+  }
+}
+message UpdateRole {
+  message req {
+
+  }
+  message resp {
+
+  }
+}
+message DeleteRole {
+  message req {
+
+  }
+  message resp {
+
+  }
+}
+
+message ListRole {
+  message req {
+
+  }
+  message resp {
+
+  }
+}
+message FindRoleById {
+  message req {
+
+  }
+  message resp {
+
+  }
+}

@@ -24,11 +24,11 @@ func wireApp(confServer *conf.Server, confData *conf.Data, jwtAuth *conf.JwtAuth
 	if err != nil {
 		return nil, nil, err
 	}
-	defaultRDS, err := data.NewDefaultRds(confData)
+	client, err := data.NewRds(confData)
 	if err != nil {
 		return nil, nil, err
 	}
-	dataData, cleanup, err := data.NewData(confData, defaultDB, defaultRDS, logger)
+	dataData, cleanup, err := data.NewData(confData, defaultDB, client, logger)
 	if err != nil {
 		return nil, nil, err
 	}

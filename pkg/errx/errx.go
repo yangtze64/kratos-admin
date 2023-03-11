@@ -8,9 +8,10 @@ import (
 type ErrxReason string
 
 const (
-	UnknownError                ErrxReason = "UNKNOWN_ERROR"
-	Success                     ErrxReason = "SUCCESS"
-	ServerError                 ErrxReason = "SERVER_ERROR"
+	UnknownError ErrxReason = "UNKNOWN_ERROR"
+	Success      ErrxReason = "SUCCESS"
+	ServerError  ErrxReason = "SERVER_ERROR"
+
 	TowPasswordDiff             ErrxReason = "TOW_PASSWORD_DIFF"
 	UserNameExist               ErrxReason = "USERNAME_EXIST"
 	UserMobileExist             ErrxReason = "USER_MOBILE_EXIST"
@@ -19,6 +20,8 @@ const (
 	UsernameOrPasswordIncorrect ErrxReason = "USERNAME_OR_PASSWORD_INCORRECT"
 	UnauthorizedInfoMissing     ErrxReason = "UNAUTHORIZED_INFO_MISSING"
 	UnauthorizedTokenInvalid    ErrxReason = "UNAUTHORIZED_TOKEN_INVALID"
+
+	RoleNameExist ErrxReason = "ROLE_NAME_EXIST"
 )
 
 var reasonMessage = map[ErrxReason]string{
@@ -33,6 +36,8 @@ var reasonMessage = map[ErrxReason]string{
 	UsernameOrPasswordIncorrect: "The user name or password is incorrect",
 	UnauthorizedInfoMissing:     "The authorization information not found",
 	UnauthorizedTokenInvalid:    "The authorization token is invalid",
+
+	RoleNameExist: "The role name already exists",
 }
 
 var reasonCode = map[ErrxReason]int{
@@ -47,6 +52,8 @@ var reasonCode = map[ErrxReason]int{
 	UsernameOrPasswordIncorrect: http.StatusUnauthorized,
 	UnauthorizedInfoMissing:     http.StatusUnauthorized,
 	UnauthorizedTokenInvalid:    http.StatusUnauthorized,
+
+	RoleNameExist: http.StatusConflict,
 }
 
 func New(reason ErrxReason) *errors.Error {

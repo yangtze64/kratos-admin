@@ -40,6 +40,13 @@ func (u *userRepo) Create(ctx context.Context, user *biz.User) (id int, err erro
 		CreatedAt: int(user.CreatedAt),
 		UpdatedAt: int(user.UpdatedAt),
 	}
+	nowTime := time.Now().Unix()
+	if m.CreatedAt <= 0 {
+		m.CreatedAt = int(nowTime)
+	}
+	if m.UpdatedAt <= 0 {
+		m.UpdatedAt = int(nowTime)
+	}
 	err = u.data.db.WithContext(ctx).Create(&m).Error
 	if err != nil {
 		return 0, err
@@ -57,6 +64,9 @@ func (u *userRepo) Update(ctx context.Context, uid string, user *biz.User) error
 		Operator:  user.Operator,
 		UpdatedAt: int(user.UpdatedAt),
 		DeletedAt: int(user.DeletedAt),
+	}
+	if m.DeletedAt > 0 && m.UpdatedAt <= 0 {
+		m.UpdatedAt = int(time.Now().Unix())
 	}
 	err := u.data.db.WithContext(ctx).
 		Where(sysuser.Column.Uid.Eq(), uid).

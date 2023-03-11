@@ -1,0 +1,16 @@
+name: admin.authorization.service
+version: v1.0
+server:
+  grpc:
+    addr: 0.0.0.0:9802
+    timeout: 1s
+data:
+  database:
+    default:
+      dsn: root:123456@tcp(127.0.0.1:3307)/kratos-admin?charset=utf8mb4&parseTime=True&loc=PRC
+      max_conn: 10
+      max_idle: 3
+  redis:
+    addr: 127.0.0.1:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s

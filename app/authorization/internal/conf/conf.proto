@@ -1,7 +1,7 @@
 syntax = "proto3";
 package kratos.api;
 
-option go_package = "kratos-admin/app/usercenter/internal/conf;conf";
+option go_package = "kratos-admin/app/authorization/internal/conf;conf";
 
 import "google/protobuf/duration.proto";
 
@@ -10,23 +10,15 @@ message Bootstrap {
   string version = 2;
   Server server = 3;
   Data data = 4;
-  JwtAuth jwtAuth = 5;
-  Trace trace = 6;
 }
 
 message Server {
-  message HTTP {
-    string network = 1;
-    string addr = 2;
-    google.protobuf.Duration timeout = 3;
-  }
   message GRPC {
     string network = 1;
     string addr = 2;
     google.protobuf.Duration timeout = 3;
   }
-  HTTP http = 1;
-  GRPC grpc = 2;
+  GRPC grpc = 1;
 }
 
 message Data {
@@ -52,15 +44,4 @@ message Data {
   }
   Database database = 1;
   Redis redis = 2;
-}
-
-message JwtAuth {
-    string secret = 1;
-    google.protobuf.Duration expire = 2;
-    string issuer = 3;
-    int64 id = 4;
-}
-
-message Trace {
-  string endpoint = 1;
 }

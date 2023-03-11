@@ -220,13 +220,6 @@ func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error)
 	}
 	user.Uid = utils.NewUuid()
 	user.Password = utils.GenPasswd(user.Password)
-	nowTime := time.Now().Unix()
-	if user.CreatedAt <= 0 {
-		user.CreatedAt = nowTime
-	}
-	if user.UpdatedAt <= 0 {
-		user.UpdatedAt = nowTime
-	}
 	id, err := u.repo.Create(ctx, user)
 	if err != nil {
 		return nil, err
@@ -254,9 +247,6 @@ func (u *UserUseCase) UpdateUserByUid(ctx context.Context, user *User) error {
 	}
 	if err := UserCheckChain(ctx, user, checkOptions...); err != nil {
 		return err
-	}
-	if user.UpdatedAt <= 0 {
-		user.UpdatedAt = time.Now().Unix()
 	}
 	uid := user.Uid
 	user.Uid = ""
