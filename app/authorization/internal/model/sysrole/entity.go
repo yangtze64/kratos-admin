@@ -7,7 +7,7 @@ var (
 // SysRole mapped from table <sys_role>
 // 角色表
 type SysRole struct {
-	Id          uint32 `gorm:"column:id;type:int(11) unsigned;primary_key;AUTO_INCREMENT" json:"id"`
+	Id          int32 `gorm:"column:id;type:int(11) unsigned;primary_key;AUTO_INCREMENT" json:"id"`
 	Name        string `gorm:"column:name;type:varchar(60);comment:角色名;NOT NULL" json:"name"`
 	Description string `gorm:"column:description;type:varchar(255);comment:角色描述;NOT NULL" json:"description"`
 	IsEnable    int8   `gorm:"column:is_enable;type:tinyint(1);default:0;comment:启用状态 1:启用 0:未启用;NOT NULL" json:"is_enable"`

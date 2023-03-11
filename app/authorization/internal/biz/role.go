@@ -7,7 +7,7 @@ import (
 )
 
 type Role struct {
-	Id          uint32
+	Id          int32
 	Name        string
 	Description string
 	IsEnable    bool
@@ -17,7 +17,7 @@ type Role struct {
 }
 
 type RoleRepo interface {
-	Create(ctx context.Context, role *Role) (id uint32, err error)
+	Create(ctx context.Context, role *Role) (id int32, err error)
 	ExistRoleName(ctx context.Context, name string) (exist bool, err error)
 }
 
@@ -33,7 +33,7 @@ func NewRoleUseCase(repo RoleRepo, logger log.Logger) *RoleUseCase {
 	}
 }
 
-func (c *RoleUseCase) CreateRole(ctx context.Context, role *Role) (id uint32, err error) {
+func (c *RoleUseCase) CreateRole(ctx context.Context, role *Role) (id int32, err error) {
 	var exist bool
 	if exist, err = c.repo.ExistRoleName(ctx, role.Name); err != nil {
 		return

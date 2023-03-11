@@ -32,7 +32,7 @@ message CreateRole {
     int32 updated_at = 10;
   }
   message resp {
-    uint32 id = 1;
+    int32 id = 1;
   }
 }
 message UpdateRole {

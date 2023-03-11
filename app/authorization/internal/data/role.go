@@ -23,7 +23,7 @@ func NewRoleRepo(data *Data, logger log.Logger) biz.RoleRepo {
 	}
 }
 
-func (ro *roleRepo) Create(ctx context.Context, role *biz.Role) (id uint32, err error) {
+func (ro *roleRepo) Create(ctx context.Context, role *biz.Role) (id int32, err error) {
 	entry := sysrole.SysRole{
 		Name:        role.Name,
 		Description: role.Description,
