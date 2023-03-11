@@ -50,9 +50,16 @@ func (ro *roleRepo) Create(ctx context.Context, role *biz.Role) (id int32, err e
 	return entry.Id, nil
 }
 
-func (ro *roleRepo) ExistRoleName(ctx context.Context, name string) (exist bool, err error) {
+func (ro *roleRepo) ExistRoleName(ctx context.Context, name string, excludeIds ...int32) (exist bool, err error) {
 	sub := ro.data.db.WithContext(ctx).Table(sysrole.TableSysRoleName).Select(sysrole.Column.Id.String()).
 		Where(sysrole.Column.Name.Eq(), name)
+	if exn := len(excludeIds); exn > 0 {
+		if exn == 1 {
+			sub.Where(sysrole.Column.Id.Neq(), excludeIds[0])
+		} else {
+			sub.Where(sysrole.Column.Id.NotIn(), excludeIds)
+		}
+	}
 	exist, err = ro.exist(ctx, sub)
 	return
 }

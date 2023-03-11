@@ -18,7 +18,7 @@ type Role struct {
 
 type RoleRepo interface {
 	Create(ctx context.Context, role *Role) (id int32, err error)
-	ExistRoleName(ctx context.Context, name string) (exist bool, err error)
+	ExistRoleName(ctx context.Context, name string, excludeIds ...int32) (exist bool, err error)
 }
 
 type RoleUseCase struct {
