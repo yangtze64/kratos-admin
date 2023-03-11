@@ -6,6 +6,7 @@ import (
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/biz"
 	"kratos-admin/pkg/global"
+	"kratos-admin/pkg/utils"
 	"time"
 )
 
@@ -15,7 +16,7 @@ func (s *UserCenterService) CreateUser(ctx context.Context, req *v1.CreateUserRe
 		Username:  req.Username,
 		Realname:  req.Realname,
 		Mobile:    req.Mobile,
-		AreaCode:  req.AreaCode,
+		AreaCode:  utils.WrapMobileAreaCode(req.AreaCode),
 		Password:  req.Password,
 		Email:     req.Email,
 		Weixin:    req.Weixin,
@@ -41,7 +42,7 @@ func (s *UserCenterService) UpdateUser(ctx context.Context, req *v1.UpdateUserRe
 		Username:  req.Username,
 		Realname:  req.Realname,
 		Mobile:    req.Mobile,
-		AreaCode:  req.AreaCode,
+		AreaCode:  utils.WrapMobileAreaCode(req.AreaCode),
 		Email:     req.Email,
 		Weixin:    req.Weixin,
 		Operator:  req.Operator,

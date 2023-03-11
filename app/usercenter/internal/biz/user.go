@@ -87,9 +87,6 @@ func NewUserUseCase(repo UserRepo, jwtAuth *conf.JwtAuth, logger log.Logger) *Us
 }
 
 func (u *UserUseCase) UserMobileSimulationLogin(ctx context.Context, ud *User) (user *User, token *JwtToken, err error) {
-	if ud.AreaCode == 0 {
-		ud.AreaCode = global.DefaultMobileAreaCode
-	}
 	user, err = u.repo.FindByMobile(ctx, ud.Mobile, ud.AreaCode)
 	if err != nil {
 		return nil, nil, err
@@ -174,9 +171,6 @@ func (u *UserUseCase) GetMultiWayUser(ctx context.Context, user *User) (*User, e
 		}
 	}
 	if !isExist && utils.VerifyMobileFormat(user.Username) {
-		if user.AreaCode == 0 {
-			user.AreaCode = global.DefaultMobileAreaCode
-		}
 		if info, err = u.repo.FindByMobile(ctx, user.Username, user.AreaCode); err != nil {
 			if !errors.Is(err, errx.New(errx.UserNotFound)) {
 				return nil, err
@@ -212,9 +206,6 @@ func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error)
 	if user.Email != "" {
 		checkOptions = append(checkOptions, WithExistEmail(u.repo))
 	}
-	if user.AreaCode == 0 {
-		user.AreaCode = global.DefaultMobileAreaCode
-	}
 	err := UserCheckChain(ctx, user, checkOptions...)
 	if err != nil {
 		return nil, err
@@ -236,9 +227,6 @@ func (u *UserUseCase) UpdateUserByUid(ctx context.Context, user *User) error {
 	}
 	if user.Username != "" {
 		checkOptions = append(checkOptions, WithExistUsername(u.repo, user.Uid))
-	}
-	if user.AreaCode == 0 {
-		user.AreaCode = global.DefaultMobileAreaCode
 	}
 	if user.Mobile != "" {
 		checkOptions = append(checkOptions, WithExistMobile(u.repo, user.Uid))

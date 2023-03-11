@@ -6,6 +6,7 @@ import (
 	v1 "kratos-admin/api/usercenter/service/v1"
 	"kratos-admin/app/usercenter/internal/biz"
 	"kratos-admin/pkg/errx"
+	"kratos-admin/pkg/utils"
 )
 
 // Register 注册用户
@@ -17,7 +18,7 @@ func (s *UserCenterService) Register(ctx context.Context, req *v1.RegisterReq) (
 		Username: req.Username,
 		Realname: req.Realname,
 		Mobile:   req.Mobile,
-		AreaCode: req.AreaCode,
+		AreaCode: utils.WrapMobileAreaCode(req.AreaCode),
 		Password: req.Password,
 		Email:    req.Email,
 		Weixin:   req.Weixin,
