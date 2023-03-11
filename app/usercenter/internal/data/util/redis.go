@@ -1,12 +1,12 @@
 package util
 
 import (
-	"fmt"
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/extra/redisotel/v9"
+	"github.com/redis/go-redis/v9"
 	"kratos-admin/app/usercenter/internal/conf"
 )
 
-func NewRedis(c *conf.Data_Redis) *redis.Client {
+func NewRedis(c *conf.Data_Redis) (*redis.Client, error) {
 	options := &redis.Options{
 		Addr: c.Addr,
 		DB:   int(c.Db),
@@ -27,9 +27,12 @@ func NewRedis(c *conf.Data_Redis) *redis.Client {
 		options.ReadTimeout = c.ReadTimeout.AsDuration()
 	}
 	if c.WriteTimeout != nil {
-		options.ReadTimeout = c.WriteTimeout.AsDuration()
+		options.WriteTimeout = c.WriteTimeout.AsDuration()
 	}
 	rds := redis.NewClient(options)
-	fmt.Println(rds)
-	return rds
+	if err := redisotel.InstrumentTracing(rds); err != nil {
+		_ = rds.Close()
+		return nil, err
+	}
+	return rds, nil
 }

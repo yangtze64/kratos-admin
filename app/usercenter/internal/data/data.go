@@ -1,11 +1,11 @@
 package data
 
 import (
+	"github.com/redis/go-redis/v9"
 	"kratos-admin/app/usercenter/internal/conf"
 	"kratos-admin/app/usercenter/internal/data/util"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"gorm.io/gorm"
 )
@@ -42,9 +42,12 @@ func NewDefaultDb(c *conf.Data) (DefaultDB, error) {
 //	return UserDB(db), nil
 //}
 
-func NewDefaultRds(c *conf.Data) DefaultRDS {
-	rds := util.NewRedis(c.Redis)
-	return DefaultRDS(rds)
+func NewDefaultRds(c *conf.Data) (DefaultRDS, error) {
+	rds, err := util.NewRedis(c.Redis)
+	if err != nil {
+		return nil, err
+	}
+	return DefaultRDS(rds), err
 }
 
 // NewData .

@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"kratos-admin/app/usercenter/internal/conf"
-	"kratos-admin/pkg/tracex/gormplugin"
+	"kratos-admin/pkg/tracex/gormtracex"
 )
 
 func NewGormDB(c *conf.Data_Mysql) (*gorm.DB, error) {
@@ -16,7 +16,7 @@ func NewGormDB(c *conf.Data_Mysql) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err = db.Use(&gormplugin.GormPlugin{}); err != nil {
+	if err = db.Use(gormtracex.NewTracingPlugin()); err != nil {
 		return nil, err
 	}
 	conn, _ := db.DB()
