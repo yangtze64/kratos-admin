@@ -80,6 +80,10 @@ func main() {
 
 	if err := tracex.SetTracerProvider(bc.Trace.Endpoint, func() attribute.KeyValue {
 		return semconv.ServiceNameKey.String(Name)
+	}, func() attribute.KeyValue {
+		return semconv.ServiceVersionKey.String(Version)
+	}, func() attribute.KeyValue {
+		return semconv.ServiceInstanceIDKey.String(id)
 	}); err != nil {
 		log.Error(err)
 	}
