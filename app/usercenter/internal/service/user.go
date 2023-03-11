@@ -54,11 +54,10 @@ func (s *UserCenterService) UpdateUser(ctx context.Context, req *v1.UpdateUserRe
 // DeleteUser 删除用户
 func (s *UserCenterService) DeleteUser(ctx context.Context, req *v1.DeleteUserReq) (resp *emptypb.Empty, err error) {
 	user := biz.User{
-		Uid:       req.Uid,
 		Operator:  req.Operator,
 		DeletedAt: req.DeletedAt,
 	}
-	err = s.uc.DeleteUserByUid(ctx, &user)
+	err = s.uc.DeleteUserByUid(ctx, req.Uid, &user)
 	return
 }
 

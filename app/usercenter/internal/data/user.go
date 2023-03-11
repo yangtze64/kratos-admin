@@ -76,6 +76,17 @@ func (u *userRepo) Update(ctx context.Context, uid string, user *biz.User) error
 	return err
 }
 
+func (u *userRepo) Delete(ctx context.Context, uid string, user *biz.User) error {
+	resetUser := &biz.User{
+		Operator:  user.Operator,
+		DeletedAt: user.DeletedAt,
+	}
+	if resetUser.DeletedAt <= 0 {
+		resetUser.DeletedAt = int32(time.Now().Unix())
+	}
+	return u.Update(ctx, uid, resetUser)
+}
+
 func (u *userRepo) List(ctx context.Context, user *biz.User) (list []*biz.User, total int64, err error) {
 	userCondOptions := []UserCondOption{
 		WithIdWhere(),

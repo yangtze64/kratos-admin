@@ -56,6 +56,7 @@ type JwtToken struct {
 type UserRepo interface {
 	Create(ctx context.Context, user *User) (id int32, err error)
 	Update(ctx context.Context, uid string, user *User) error
+	Delete(ctx context.Context, uid string, user *User) error
 	List(ctx context.Context, user *User) (list []*User, total int64, err error)
 	FindByUid(ctx context.Context, uid string) (*User, error)
 	FindByUsername(ctx context.Context, username string) (*User, error)
@@ -254,16 +255,11 @@ func (u *UserUseCase) UpdateUserByUid(ctx context.Context, user *User) error {
 }
 
 // DeleteUserByUid 根据UID删除用户
-func (u *UserUseCase) DeleteUserByUid(ctx context.Context, user *User) error {
+func (u *UserUseCase) DeleteUserByUid(ctx context.Context,uid string, user *User) error {
 	if err := UserCheckChain(ctx, user, WithNotExistUser(u.repo)); err != nil {
 		return err
 	}
-	if user.DeletedAt <= 0 {
-		user.DeletedAt = int32(time.Now().Unix())
-	}
-	uid := user.Uid
-	user.Uid = ""
-	return u.repo.Update(ctx, uid, user)
+	return u.repo.Delete(ctx, uid, user)
 }
 
 // GetUserByUid 根据UID获取用户详情
