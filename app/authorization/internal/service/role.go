@@ -12,15 +12,15 @@ func (s *AuthorizationService) CreateRole(ctx context.Context, req *v1.CreateRol
 		Description: req.Description,
 		IsEnable:    req.IsEnable,
 		Operator:    req.Operator,
-		CreatedAt:   int(req.CreatedAt),
-		UpdatedAt:   int(req.UpdatedAt),
+		CreatedAt:   req.CreatedAt,
+		UpdatedAt:   req.UpdatedAt,
 	}
 	id, err := s.rc.CreateRole(ctx, role)
 	if err != nil {
 		return nil, err
 	}
 	resp = &v1.CreateRoleResp{
-		Id: int64(id),
+		Id: id,
 	}
 	return
 }

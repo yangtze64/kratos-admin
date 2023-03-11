@@ -23,7 +23,7 @@ func NewRoleRepo(data *Data, logger log.Logger) biz.RoleRepo {
 	}
 }
 
-func (ro *roleRepo) Create(ctx context.Context, role *biz.Role) (id int, err error) {
+func (ro *roleRepo) Create(ctx context.Context, role *biz.Role) (id uint32, err error) {
 	entry := sysrole.SysRole{
 		Name:        role.Name,
 		Description: role.Description,
@@ -36,10 +36,10 @@ func (ro *roleRepo) Create(ctx context.Context, role *biz.Role) (id int, err err
 	}
 	nowTime := time.Now().Unix()
 	if role.CreatedAt <= 0 {
-		entry.CreatedAt = int(nowTime)
+		entry.CreatedAt = int32(nowTime)
 	}
 	if role.UpdatedAt <= 0 {
-		entry.UpdatedAt = int(nowTime)
+		entry.UpdatedAt = int32(nowTime)
 	}
 	err = ro.data.db.WithContext(ctx).Create(&entry).Error
 	if err != nil {
