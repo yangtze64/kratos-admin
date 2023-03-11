@@ -10,7 +10,7 @@ type Role struct {
 	Id          int32
 	Name        string
 	Description string
-	IsEnable    bool
+	IsEnable    int32
 	Operator    string
 	CreatedAt   int32
 	UpdatedAt   int32

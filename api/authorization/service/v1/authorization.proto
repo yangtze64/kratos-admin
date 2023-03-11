@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package authorization.service.v1;
 
-//import "google/protobuf/empty.proto";
+import "google/protobuf/empty.proto";
 import "validate/validate.proto";
 
 option go_package = "api/authorization/service/v1;v1";
@@ -12,7 +12,7 @@ service Authorization {
   // 创建角色
   rpc CreateRole (CreateRole.req) returns (CreateRole.resp) {}
   // 修改角色
-  rpc UpdateRole (UpdateRole.req) returns (UpdateRole.resp) {}
+  rpc UpdateRole (UpdateRole.req) returns (google.protobuf.Empty) {}
   // 删除角色
   rpc DeleteRole (DeleteRole.req) returns (DeleteRole.resp) {}
   // 角色列表
@@ -22,11 +22,17 @@ service Authorization {
 }
 
 
+enum EnableEnum{
+  NONE = 0;
+  ENABLE = 1;
+  DISABLE = 2;
+}
+
 message CreateRole {
   message req {
     string name = 1 [(validate.rules).string = {max_len:60}];
     string description = 2 [(validate.rules).string = {ignore_empty:true,max_len:255}];
-    bool is_enable = 3;
+    EnableEnum is_enable = 3;
     string operator = 8;
     int32 created_at = 9;
     int32 updated_at = 10;
@@ -37,10 +43,11 @@ message CreateRole {
 }
 message UpdateRole {
   message req {
-
-  }
-  message resp {
-
+    string name = 1 [(validate.rules).string = {ignore_empty:true,max_len:60}];
+    string description = 2 [(validate.rules).string = {ignore_empty:true,max_len:255}];
+    EnableEnum is_enable = 3;
+    string operator = 8;
+    int32 updated_at = 10;
   }
 }
 message DeleteRole {

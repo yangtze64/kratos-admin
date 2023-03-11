@@ -31,8 +31,10 @@ func (ro *roleRepo) Create(ctx context.Context, role *biz.Role) (id int32, err e
 		CreatedAt:   role.CreatedAt,
 		UpdatedAt:   role.UpdatedAt,
 	}
-	if role.IsEnable {
+	if role.IsEnable == 1 {
 		entry.IsEnable = 1
+	} else {
+		entry.IsEnable = 2
 	}
 	nowTime := time.Now().Unix()
 	if role.CreatedAt <= 0 {

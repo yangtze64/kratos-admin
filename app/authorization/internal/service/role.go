@@ -11,7 +11,7 @@ func (s *AuthorizationService) CreateRole(ctx context.Context, req *v1.CreateRol
 	role := &biz.Role{
 		Name:        req.Name,
 		Description: req.Description,
-		IsEnable:    req.IsEnable,
+		IsEnable:    int32(req.IsEnable),
 		Operator:    utils.WrapOperator(ctx, req.Operator),
 		CreatedAt:   req.CreatedAt,
 		UpdatedAt:   req.UpdatedAt,
