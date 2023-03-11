@@ -90,8 +90,8 @@ message User {
     string email = 6;
     string weixin = 7;
     string operator = 9;
-    int64 created_at = 10;
-    int64 updated_at = 11;
+    int32 created_at = 10;
+    int32 updated_at = 11;
     string created_date = 12;
     string updated_date = 13;
 }
@@ -150,11 +150,11 @@ message CreateUser {
         string email = 6 [(validate.rules).string = {email:true}];
         string weixin = 7 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
         string operator = 8;
-        int64 created_at = 9;
-        int64 updated_at = 10;
+        int32 created_at = 9;
+        int32 updated_at = 10;
     }
     message resp {
-        int64 id = 1;
+        int32 id = 1;
         string uid = 2;
     }
 }
@@ -168,19 +168,19 @@ message UpdateUser {
         string email = 6 [(validate.rules).string = {ignore_empty:true, email:true}];
         string weixin = 7 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
         string operator = 8;
-        int64 updated_at = 9;
+        int32 updated_at = 9;
     }
 }
 message DeleteUser {
     message req {
         string uid = 1 [(validate.rules).string.uuid = true];
         string operator = 2;
-        int64 deleted_at = 3;
+        int32 deleted_at = 3;
     }
 }
 
 message UserFilter {
-    repeated int64 id = 1;
+    repeated int32 id = 1;
     repeated string uid = 2;
     string mobile = 3;
     int32 area_code = 4;
@@ -191,15 +191,15 @@ message UserFilter {
     string email = 9;
     string email_fuzzy = 10;
     string weixin = 11;
-    int64 created_at = 12;
-    int64 updated_at = 13;
+    int32 created_at = 12;
+    int32 updated_at = 13;
     string created_date_start = 14;
     string created_date_end = 15;
     string updated_date_start = 16;
     string updated_date_end = 17;
     repeated string operator = 18;
-    int64 page = 19 [(validate.rules).int64 = {gte: 1}];
-    int64 limit = 20 [(validate.rules).int64 = {gte: 1,  lte: 100}];
+    int32 page = 19 [(validate.rules).int32 = {gte: 1}];
+    int32 limit = 20 [(validate.rules).int32 = {gte: 1,  lte: 100}];
     SortEnum sort_id = 21;
     SortEnum sort_created_at = 22;
     SortEnum sort_updated_at = 23;

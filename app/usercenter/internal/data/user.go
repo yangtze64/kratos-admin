@@ -26,7 +26,7 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 	}
 }
 
-func (u *userRepo) Create(ctx context.Context, user *biz.User) (id int, err error) {
+func (u *userRepo) Create(ctx context.Context, user *biz.User) (id int32, err error) {
 	m := sysuser.SysUser{
 		Uid:       user.Uid,
 		Username:  user.Username,
@@ -37,15 +37,15 @@ func (u *userRepo) Create(ctx context.Context, user *biz.User) (id int, err erro
 		Email:     user.Email,
 		Weixin:    user.Weixin,
 		Operator:  user.Operator,
-		CreatedAt: int(user.CreatedAt),
-		UpdatedAt: int(user.UpdatedAt),
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}
 	nowTime := time.Now().Unix()
 	if m.CreatedAt <= 0 {
-		m.CreatedAt = int(nowTime)
+		m.CreatedAt = int32(nowTime)
 	}
 	if m.UpdatedAt <= 0 {
-		m.UpdatedAt = int(nowTime)
+		m.UpdatedAt = int32(nowTime)
 	}
 	err = u.data.db.WithContext(ctx).Create(&m).Error
 	if err != nil {
@@ -62,11 +62,11 @@ func (u *userRepo) Update(ctx context.Context, uid string, user *biz.User) error
 		Email:     user.Email,
 		Weixin:    user.Weixin,
 		Operator:  user.Operator,
-		UpdatedAt: int(user.UpdatedAt),
-		DeletedAt: int(user.DeletedAt),
+		UpdatedAt: user.UpdatedAt,
+		DeletedAt: user.DeletedAt,
 	}
 	if m.DeletedAt > 0 && m.UpdatedAt <= 0 {
-		m.UpdatedAt = int(time.Now().Unix())
+		m.UpdatedAt = int32(time.Now().Unix())
 	}
 	err := u.data.db.WithContext(ctx).
 		Where(sysuser.Column.Uid.Eq(), uid).
@@ -262,7 +262,7 @@ func UserFromEntity(m *sysuser.SysUser) *biz.User {
 		Email:     m.Email,
 		Weixin:    m.Weixin,
 		Operator:  m.Operator,
-		CreatedAt: int64(m.CreatedAt),
-		UpdatedAt: int64(m.UpdatedAt),
+		CreatedAt: m.CreatedAt,
+		UpdatedAt: m.UpdatedAt,
 	}
 }

@@ -29,7 +29,7 @@ func (s *UserCenterService) CreateUser(ctx context.Context, req *v1.CreateUserRe
 		return nil, err
 	}
 	resp = &v1.CreateUserResp{
-		Id:  int64(user.Id),
+		Id:  user.Id,
 		Uid: user.Uid,
 	}
 	return
@@ -116,8 +116,8 @@ func UserFromBizUser(u *biz.User) *v1.User {
 		Operator:    u.Operator,
 		CreatedAt:   u.CreatedAt,
 		UpdatedAt:   u.UpdatedAt,
-		CreatedDate: time.Unix(u.CreatedAt, 0).Format(global.TimeFormat),
-		UpdatedDate: time.Unix(u.UpdatedAt, 0).Format(global.TimeFormat),
+		CreatedDate: time.Unix(int64(u.CreatedAt), 0).Format(global.TimeFormat),
+		UpdatedDate: time.Unix(int64(u.UpdatedAt), 0).Format(global.TimeFormat),
 	}
 }
 

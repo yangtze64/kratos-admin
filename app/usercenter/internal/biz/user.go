@@ -14,7 +14,7 @@ import (
 )
 
 type User struct {
-	Id        int
+	Id        int32
 	Uid       string
 	Username  string
 	Realname  string
@@ -24,11 +24,11 @@ type User struct {
 	Email     string
 	Weixin    string
 	Operator  string
-	CreatedAt int64
-	UpdatedAt int64
-	DeletedAt int64
+	CreatedAt int32
+	UpdatedAt int32
+	DeletedAt int32
 
-	Ids              []int64
+	Ids              []int32
 	Uids             []string
 	UsernameFuzzy    string
 	RealnameFuzzy    string
@@ -54,7 +54,7 @@ type JwtToken struct {
 }
 
 type UserRepo interface {
-	Create(ctx context.Context, user *User) (id int, err error)
+	Create(ctx context.Context, user *User) (id int32, err error)
 	Update(ctx context.Context, uid string, user *User) error
 	List(ctx context.Context, user *User) (list []*User, total int64, err error)
 	FindByUid(ctx context.Context, uid string) (*User, error)
@@ -259,7 +259,7 @@ func (u *UserUseCase) DeleteUserByUid(ctx context.Context, user *User) error {
 		return err
 	}
 	if user.DeletedAt <= 0 {
-		user.DeletedAt = time.Now().Unix()
+		user.DeletedAt = int32(time.Now().Unix())
 	}
 	uid := user.Uid
 	user.Uid = ""
