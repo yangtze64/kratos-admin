@@ -4,6 +4,7 @@ import (
 	"context"
 	v1 "kratos-admin/api/authorization/service/v1"
 	"kratos-admin/app/authorization/internal/biz"
+	"kratos-admin/pkg/utils"
 )
 
 func (s *AuthorizationService) CreateRole(ctx context.Context, req *v1.CreateRoleReq) (resp *v1.CreateRoleResp, err error) {
@@ -11,7 +12,7 @@ func (s *AuthorizationService) CreateRole(ctx context.Context, req *v1.CreateRol
 		Name:        req.Name,
 		Description: req.Description,
 		IsEnable:    req.IsEnable,
-		Operator:    req.Operator,
+		Operator:    utils.WrapOperator(ctx, req.Operator),
 		CreatedAt:   req.CreatedAt,
 		UpdatedAt:   req.UpdatedAt,
 	}

@@ -106,7 +106,6 @@ message Register {
         string password_review = 6 [(validate.rules).string = {pattern:"^[a-zA-Z][a-zA-Z0-9_#?!@$%^&*.-]{5,19}$"}];
         string email = 7 [(validate.rules).string = {email:true}];
         string weixin = 8 [(validate.rules).string = {ignore_empty:true, pattern:"^[a-zA-Z][a-zA-Z0-9_-]{5,19}$"}];
-        string operator = 9;
     }
     message resp {
         string username = 1;

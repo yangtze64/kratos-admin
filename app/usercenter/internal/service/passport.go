@@ -22,7 +22,6 @@ func (s *UserCenterService) Register(ctx context.Context, req *v1.RegisterReq) (
 		Password: req.Password,
 		Email:    req.Email,
 		Weixin:   req.Weixin,
-		Operator: req.Operator,
 	}
 	user, err := s.uc.CreateUser(ctx, u)
 	if err != nil {

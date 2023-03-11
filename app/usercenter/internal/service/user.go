@@ -20,7 +20,7 @@ func (s *UserCenterService) CreateUser(ctx context.Context, req *v1.CreateUserRe
 		Password:  req.Password,
 		Email:     req.Email,
 		Weixin:    req.Weixin,
-		Operator:  req.Operator,
+		Operator: utils.WrapOperator(ctx, req.Operator),
 		CreatedAt: req.CreatedAt,
 		UpdatedAt: req.UpdatedAt,
 	}
@@ -45,7 +45,7 @@ func (s *UserCenterService) UpdateUser(ctx context.Context, req *v1.UpdateUserRe
 		AreaCode:  utils.WrapMobileAreaCode(req.AreaCode),
 		Email:     req.Email,
 		Weixin:    req.Weixin,
-		Operator:  req.Operator,
+		Operator: utils.WrapOperator(ctx, req.Operator),
 		UpdatedAt: req.UpdatedAt,
 	}
 	err = s.uc.UpdateUserByUid(ctx, &user)
@@ -55,7 +55,7 @@ func (s *UserCenterService) UpdateUser(ctx context.Context, req *v1.UpdateUserRe
 // DeleteUser 删除用户
 func (s *UserCenterService) DeleteUser(ctx context.Context, req *v1.DeleteUserReq) (resp *emptypb.Empty, err error) {
 	user := biz.User{
-		Operator:  req.Operator,
+		Operator: utils.WrapOperator(ctx, req.Operator),
 		DeletedAt: req.DeletedAt,
 	}
 	err = s.uc.DeleteUserByUid(ctx, req.Uid, &user)
