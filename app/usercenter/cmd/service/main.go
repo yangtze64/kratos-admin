@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/registry"
 	"go.opentelemetry.io/otel/attribute"
 	"kratos-admin/pkg/tracex"
 	"os"
@@ -34,7 +35,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, r registry.Registrar) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -45,6 +46,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
+		kratos.Registrar(r),
 	)
 }
 
@@ -65,8 +67,8 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-	Name = bc.Name
-	Version = bc.Version
+	Name = bc.Service.Name
+	Version = bc.Service.Version
 
 	logger := log.With(log.NewStdLogger(os.Stdout),
 		"ts", log.DefaultTimestamp,
@@ -88,7 +90,7 @@ func main() {
 		log.Error(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.JwtAuth, logger)
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Registry, bc.JwtAuth, logger)
 	if err != nil {
 		panic(err)
 	}

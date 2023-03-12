@@ -6,12 +6,17 @@ option go_package = "kratos-admin/app/usercenter/internal/conf;conf";
 import "google/protobuf/duration.proto";
 
 message Bootstrap {
+  Service service = 1;
+  Server server = 2;
+  Data data = 3;
+  JwtAuth jwtAuth = 4;
+  Trace trace = 5;
+  Registry registry = 6;
+}
+
+message Service {
   string name = 1;
   string version = 2;
-  Server server = 3;
-  Data data = 4;
-  JwtAuth jwtAuth = 5;
-  Trace trace = 6;
 }
 
 message Server {
@@ -28,6 +33,8 @@ message Server {
   HTTP http = 1;
   GRPC grpc = 2;
 }
+
+
 
 message Data {
   message Mysql {
@@ -54,13 +61,21 @@ message Data {
   Redis redis = 2;
 }
 
+
 message JwtAuth {
-    string secret = 1;
-    google.protobuf.Duration expire = 2;
-    string issuer = 3;
-    int64 id = 4;
+  string secret = 1;
+  google.protobuf.Duration expire = 2;
+  string issuer = 3;
+  int64 id = 4;
 }
 
 message Trace {
   string endpoint = 1;
+}
+
+message Registry {
+  message Etcd {
+    string address = 1;
+  }
+  Etcd etcd = 1;
 }

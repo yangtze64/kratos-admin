@@ -6,10 +6,15 @@ option go_package = "kratos-admin/app/authorization/internal/conf;conf";
 import "google/protobuf/duration.proto";
 
 message Bootstrap {
+  Service service = 1;
+  Server server = 2;
+  Data data = 3;
+  Registry registry = 4;
+}
+
+message Service {
   string name = 1;
   string version = 2;
-  Server server = 3;
-  Data data = 4;
 }
 
 message Server {
@@ -44,4 +49,11 @@ message Data {
   }
   Database database = 1;
   Redis redis = 2;
+}
+
+message Registry {
+  message Etcd {
+    string address = 1;
+  }
+  Etcd etcd = 1;
 }

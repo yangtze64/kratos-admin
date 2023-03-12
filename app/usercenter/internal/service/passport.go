@@ -50,7 +50,8 @@ func (s *UserCenterService) PasswdLogin(ctx context.Context, req *v1.PasswdLogin
 	resp = &v1.UserLoginResp{
 		Uid:          user.Uid,
 		Username:     user.Username,
-		Realname:     user.Realname,
+		Realname:     utils.WrapSensitiveStr(user.Realname),
+		Email:        utils.WrapSensitiveStr(user.Email),
 		AccessToken:  token.AccessToken,
 		AccessExpire: token.AccessExpire,
 		RefreshAfter: token.RefreshAfter,
@@ -71,7 +72,8 @@ func (s *UserCenterService) SimulationLogin(ctx context.Context, req *v1.Simulat
 	resp = &v1.UserLoginResp{
 		Uid:          user.Uid,
 		Username:     user.Username,
-		Realname:     user.Realname,
+		Realname:     utils.WrapSensitiveStr(user.Realname),
+		Email:        utils.WrapSensitiveStr(user.Email),
 		AccessToken:  token.AccessToken,
 		AccessExpire: token.AccessExpire,
 		RefreshAfter: token.RefreshAfter,

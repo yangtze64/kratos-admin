@@ -1,5 +1,6 @@
-name: admin.authorization.service
-version: v1.0
+service:
+  name: authorization.service.v1
+  version: v1.0
 server:
   grpc:
     addr: 0.0.0.0:9802
@@ -14,3 +15,7 @@ data:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+
+registry:
+  etcd:
+    address: 127.0.0.1:2479

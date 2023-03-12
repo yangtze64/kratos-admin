@@ -44,3 +44,15 @@ func (c *RoleUseCase) CreateRole(ctx context.Context, role *Role) (id int32, err
 	id, err = c.repo.Create(ctx, role)
 	return
 }
+
+func (c *RoleUseCase) UpdateRole(ctx context.Context, role *Role) (id int32, err error) {
+	//var exist bool
+	//if exist, err = c.repo.ExistRoleName(ctx, role.Name); err != nil {
+	//	return
+	//}
+	//if exist {
+	//	return 0, errx.New(errx.RoleNameExist)
+	//}
+	//id, err = c.repo.Create(ctx, role)
+	return
+}

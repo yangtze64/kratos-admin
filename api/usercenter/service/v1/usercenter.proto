@@ -120,9 +120,10 @@ message UserLoginResp {
     string uid = 1;
     string username = 2;
     string realname = 3;
-    string AccessToken = 4;
-    int64 AccessExpire = 5;
-    int64 RefreshAfter = 6;
+    string email = 4;
+    string AccessToken = 5;
+    int64 AccessExpire = 6;
+    int64 RefreshAfter = 7;
 }
 message PasswdLogin {
     message req {

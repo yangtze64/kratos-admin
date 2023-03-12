@@ -1,16 +1,19 @@
 package data
 
 import (
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/google/wire"
 	"github.com/redis/go-redis/v9"
+	etcdclient "go.etcd.io/etcd/client/v3"
 	"gorm.io/gorm"
 	"kratos-admin/app/authorization/internal/conf"
 	"kratos-admin/app/authorization/internal/data/util"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDefaultDb, NewRds, NewRoleRepo)
+var ProviderSet = wire.NewSet(NewData, NewRegistrar, NewDefaultDb, NewRds, NewRoleRepo)
 
 type (
 	DefaultDB *gorm.DB
@@ -34,6 +37,18 @@ func NewRds(c *conf.Data) (*redis.Client, error) {
 		return nil, err
 	}
 	return rds, err
+}
+
+func NewRegistrar(conf *conf.Registry) (registry.Registrar, error) {
+	point := conf.Etcd.Address
+	client, err := etcdclient.New(etcdclient.Config{
+		Endpoints: []string{point},
+	})
+	if err != nil {
+		return nil, err
+	}
+	r := etcd.New(client)
+	return r, nil
 }
 
 // NewData .

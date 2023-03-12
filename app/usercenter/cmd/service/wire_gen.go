@@ -19,7 +19,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, jwtAuth *conf.JwtAuth, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Registry, jwtAuth *conf.JwtAuth, logger log.Logger) (*kratos.App, func(), error) {
 	defaultDB, err := data.NewDefaultDb(confData)
 	if err != nil {
 		return nil, nil, err
@@ -37,7 +37,12 @@ func wireApp(confServer *conf.Server, confData *conf.Data, jwtAuth *conf.JwtAuth
 	userCenterService := service.NewUserCenterService(userUseCase)
 	grpcServer := server.NewGRPCServer(confServer, jwtAuth, userCenterService, logger)
 	httpServer := server.NewHTTPServer(confServer, jwtAuth, userCenterService, logger)
-	app := newApp(logger, grpcServer, httpServer)
+	registrar, err := data.NewRegistrar(registry)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	app := newApp(logger, grpcServer, httpServer, registrar)
 	return app, func() {
 		cleanup()
 	}, nil

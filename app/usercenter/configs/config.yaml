@@ -1,5 +1,6 @@
-name: admin.usercenter.service
-version: v1.0
+service:
+  name: usercenter.service.v1
+  version: v1.0
 server:
   http:
     addr: 0.0.0.0:8801
@@ -22,6 +23,7 @@ data:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+
 jwtAuth:
   secret: 366CD62F-EA73-48A7-9751-7F1EE90BF3BE
   expire: 7200s
@@ -30,3 +32,7 @@ jwtAuth:
 
 trace:
   endpoint: http://127.0.0.1:14268/api/traces
+
+registry:
+  etcd:
+    address: 127.0.0.1:2479
