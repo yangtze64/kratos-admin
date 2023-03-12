@@ -1,5 +1,5 @@
 service:
-  name: authorization.service.v1
+  name: authorization.service
   version: v1.0
 server:
   grpc:

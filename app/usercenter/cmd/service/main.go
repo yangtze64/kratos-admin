@@ -90,7 +90,7 @@ func main() {
 		log.Error(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Registry, bc.JwtAuth, logger)
+	app, cleanup, err := wireApp(bc.Server, bc.Registry, bc.Data, bc.JwtAuth, logger)
 	if err != nil {
 		panic(err)
 	}

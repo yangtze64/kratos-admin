@@ -27,12 +27,12 @@ type (
 	}
 )
 
-func NewDefaultDb(c *conf.Data) (DefaultDB, error) {
+func NewDefaultDb(c *conf.Data) DefaultDB {
 	db, err := util.NewGormDB(c.Database.Default)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	return DefaultDB(db), nil
+	return DefaultDB(db)
 }
 
 //func NewUserDb(c *conf.Data) (UserDB, error) {
@@ -43,24 +43,24 @@ func NewDefaultDb(c *conf.Data) (DefaultDB, error) {
 //	return UserDB(db), nil
 //}
 
-func NewRds(c *conf.Data) (*redis.Client, error) {
+func NewRds(c *conf.Data) *redis.Client {
 	rds, err := util.NewRedis(c.Redis)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	return rds, err
+	return rds
 }
 
-func NewRegistrar(conf *conf.Registry) (registry.Registrar, error) {
+func NewRegistrar(conf *conf.Registry) registry.Registrar {
 	point := conf.Etcd.Address
 	client, err := etcdclient.New(etcdclient.Config{
 		Endpoints: []string{point},
 	})
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 	r := etcd.New(client)
-	return r, nil
+	return r
 }
 
 // NewData .

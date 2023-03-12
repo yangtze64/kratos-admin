@@ -1,5 +1,5 @@
 service:
-  name: usercenter.service.v1
+  name: usercenter.service
   version: v1.0
 server:
   http:
