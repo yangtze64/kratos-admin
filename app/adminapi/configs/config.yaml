@@ -1,0 +1,17 @@
+service:
+  name: adminapi.service
+  version: v1.0
+  usercenter:
+    endpoint: discovery:///usercenter.service
+    timeout: 30s
+  authorization:
+    endpoint: discovery:///authorization.service
+    timeout: 30s
+server:
+  http:
+    addr: 0.0.0.0:8800
+    timeout: 1s
+
+registry:
+  etcd:
+    address: 127.0.0.1:2479

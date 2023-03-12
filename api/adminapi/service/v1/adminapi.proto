@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package adminapi.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "api/adminapi/service/v1;v1";
+
+service AdminApi {
+  // 登录
+  rpc Login (Login.req) returns (LoginResp) {
+    option (google.api.http) = {
+      post: "/passport/v1/login"
+      body: "*"
+    };
+  }
+  rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get: "/passport/v1/logout"
+      additional_bindings {
+        post: "/passport/v1/logout",
+        body: "*",
+      }
+    };
+  }
+  rpc Captcha(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get: "/passport/v1/captcha"
+    };
+  }
+}
+message Login {
+  message req {
+    string username = 1;// 包含 username、mobile、email
+    int32 area_code = 2; // username是mobile时可用
+    string password = 3;
+  }
+}
+message LoginResp {
+  string uid = 1;
+  string username = 2;
+  string AccessToken = 5;
+  int64 AccessExpire = 6;
+  int64 RefreshAfter = 7;
+}

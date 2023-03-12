@@ -1,0 +1,48 @@
+syntax = "proto3";
+package kratos.api;
+
+option go_package = "kratos-admin/app/adminapi/internal/conf;conf";
+
+import "google/protobuf/duration.proto";
+
+message Bootstrap {
+  Service service = 1;
+  Server server = 2;
+  Data data = 3;
+  Registry registry = 4;
+}
+
+message Service {
+  string name = 1;
+  string version = 2;
+  Usercenter usercenter = 3;
+  Authorization authorization = 4;
+  message Usercenter {
+    string endpoint = 1;
+    google.protobuf.Duration timeout = 2;
+  }
+  message Authorization {
+    string endpoint = 1;
+    google.protobuf.Duration timeout = 2;
+  }
+}
+
+message Server {
+  message HTTP {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  HTTP http = 1;
+}
+
+message Data {
+
+}
+
+message Registry {
+  message Etcd {
+    string address = 1;
+  }
+  Etcd etcd = 1;
+}
