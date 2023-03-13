@@ -9,6 +9,7 @@ import (
 	"kratos-admin/app/adminapi/internal/conf"
 	"kratos-admin/pkg/tracex"
 	"os"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -66,6 +67,10 @@ func main() {
 	}
 	Name = bc.Service.Name
 	Version = bc.Service.Version
+	addr := strings.SplitN(bc.Server.Http.Addr, ":", 2)
+	if len(addr) == 2 {
+		id += ":" + addr[1]
+	}
 
 	logger := log.With(log.NewStdLogger(os.Stdout),
 		"ts", log.DefaultTimestamp,

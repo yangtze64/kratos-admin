@@ -7,6 +7,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"kratos-admin/pkg/tracex"
 	"os"
+	"strings"
 
 	"kratos-admin/app/usercenter/internal/conf"
 
@@ -69,7 +70,10 @@ func main() {
 	}
 	Name = bc.Service.Name
 	Version = bc.Service.Version
-
+	addr := strings.SplitN(bc.Server.Grpc.Addr, ":", 2)
+	if len(addr) == 2 {
+		id += ":" + addr[1]
+	}
 	logger := log.With(log.NewStdLogger(os.Stdout),
 		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,
