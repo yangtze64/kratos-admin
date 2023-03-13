@@ -30,9 +30,8 @@ func wireApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Da
 	userUseCase := biz.NewUserUseCase(userRepo, jwtAuth, logger)
 	userCenterService := service.NewUserCenterService(userUseCase)
 	grpcServer := server.NewGRPCServer(confServer, jwtAuth, userCenterService, logger)
-	httpServer := server.NewHTTPServer(confServer, jwtAuth, userCenterService, logger)
 	registrar := data.NewRegistrar(registry)
-	app := newApp(logger, grpcServer, httpServer, registrar)
+	app := newApp(logger, grpcServer, registrar)
 	return app, func() {
 		cleanup()
 	}, nil

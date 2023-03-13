@@ -2,9 +2,6 @@ service:
   name: usercenter.service
   version: v1.0
 server:
-  http:
-    addr: 0.0.0.0:8801
-    timeout: 1s
   grpc:
     addr: 0.0.0.0:9801
     timeout: 1s
