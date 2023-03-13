@@ -10,6 +10,7 @@ message Bootstrap {
   Server server = 2;
   Data data = 3;
   Registry registry = 4;
+  Trace trace = 5;
 }
 
 message Service {
@@ -56,4 +57,8 @@ message Registry {
     string address = 1;
   }
   Etcd etcd = 1;
+}
+
+message Trace {
+  string endpoint = 1;
 }

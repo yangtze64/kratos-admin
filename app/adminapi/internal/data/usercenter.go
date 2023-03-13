@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	v1 "kratos-admin/api/adminapi/service/v1"
@@ -24,6 +25,7 @@ func NewUserCenterClient(sr *conf.Service, r registry.Discovery) userCenterv1.Us
 		grpc.WithTimeout(sr.Usercenter.Timeout.AsDuration()),
 		grpc.WithMiddleware(
 			recovery.Recovery(),
+			tracing.Client(),
 		),
 	)
 	if err != nil {

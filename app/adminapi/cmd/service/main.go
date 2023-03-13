@@ -4,7 +4,10 @@ import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
+	"go.opentelemetry.io/otel/attribute"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"kratos-admin/app/adminapi/internal/conf"
+	"kratos-admin/pkg/tracex"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
@@ -73,6 +76,16 @@ func main() {
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
+
+	if err := tracex.SetTracerProvider(bc.Trace.Endpoint, func() attribute.KeyValue {
+		return semconv.ServiceNameKey.String(Name)
+	}, func() attribute.KeyValue {
+		return semconv.ServiceVersionKey.String(Version)
+	}, func() attribute.KeyValue {
+		return semconv.ServiceInstanceIDKey.String(id)
+	}); err != nil {
+		log.Error(err)
+	}
 
 	app, cleanup, err := wireApp(bc.Server, bc.Registry, bc.Service, bc.Data, logger)
 	if err != nil {

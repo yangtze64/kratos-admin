@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	authorizationv1 "kratos-admin/api/authorization/service/v1"
@@ -23,6 +24,7 @@ func NewAuthorizationClient(sr *conf.Service, r registry.Discovery) authorizatio
 		grpc.WithTimeout(sr.Authorization.Timeout.AsDuration()),
 		grpc.WithMiddleware(
 			recovery.Recovery(),
+			tracing.Client(),
 		),
 	)
 	if err != nil {
